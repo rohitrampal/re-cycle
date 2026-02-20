@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "EduCycle",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफल",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "delete": "हटाएं",
+    "edit": "संपादित करें",
+    "search": "खोजें",
+    "filter": "फ़िल्टर",
+    "clear": "साफ करें",
+    "apply": "लागू करें",
+    "close": "बंद करें",
+    "submit": "जमा करें",
+    "next": "अगला",
+    "previous": "पिछला",
+    "back": "वापस"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "logout": "लॉगआउट",
+    "register": "पंजीकरण",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "name": "नाम",
+    "phone": "फोन",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "rememberMe": "मुझे याद रखें",
+    "alreadyHaveAccount": "पहले से खाता है?",
+    "dontHaveAccount": "खाता नहीं है?",
+    "createAccount": "खाता बनाएं"
+  },
+  "listing": {
+    "create": "सूची बनाएं",
+    "edit": "सूची संपादित करें",
+    "title": "शीर्षक",
+    "description": "विवरण",
+    "category": "श्रेणी",
+    "type": "प्रकार",
+    "condition": "स्थिति",
+    "price": "मूल्य",
+    "images": "छवियां",
+    "sell": "बेचें",
+    "rent": "किराए पर दें",
+    "free": "मुफ्त",
+    "new": "नया",
+    "likeNew": "नए जैसा",
+    "good": "अच्छा",
+    "fair": "ठीक",
+    "poor": "खराब",
+    "contactOwner": "मालिक से संपर्क करें",
+    "views": "दृश्य",
+    "posted": "पोस्ट किया गया",
+    "location": "स्थान"
+  },
+  "search": {
+    "searchPlaceholder": "किताबें, नोट्स खोजें...",
+    "filters": "फ़िल्टर",
+    "category": "श्रेणी",
+    "priceRange": "मूल्य सीमा",
+    "condition": "स्थिति",
+    "radius": "त्रिज्या (किमी)",
+    "freeOnly": "केवल मुफ्त",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "results": "परिणाम"
+  },
+  "profile": {
+    "myProfile": "मेरी प्रोफ़ाइल",
+    "myListings": "मेरी सूचियां",
+    "settings": "सेटिंग्स",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "changeLanguage": "भाषा बदलें"
+  },
+  "navigation": {
+    "home": "होम",
+    "browse": "ब्राउज़ करें",
+    "create": "बनाएं",
+    "profile": "प्रोफ़ाइल"
+  },
+  "errors": {
+    "required": "यह फ़ील्ड आवश्यक है",
+    "invalidEmail": "अमान्य ईमेल पता",
+    "invalidPhone": "अमान्य फोन नंबर",
+    "passwordTooShort": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
+    "somethingWentWrong": "कुछ गलत हो गया",
+    "networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।"
+  }
+}

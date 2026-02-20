@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "EduCycle",
+    "loading": "लोड होत आहे...",
+    "error": "त्रुटी",
+    "success": "यशस्वी",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "delete": "हटवा",
+    "edit": "संपादन करा",
+    "search": "शोधा",
+    "filter": "फिल्टर",
+    "clear": "साफ करा",
+    "apply": "लागू करा",
+    "close": "बंद करा",
+    "submit": "सबमिट करा",
+    "next": "पुढे",
+    "previous": "मागे",
+    "back": "मागे"
+  },
+  "auth": {
+    "login": "लॉगिन",
+    "logout": "लॉगआउट",
+    "register": "नोंदणी",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "name": "नाव",
+    "phone": "फोन",
+    "forgotPassword": "पासवर्ड विसरलात?",
+    "rememberMe": "मला लक्षात ठेवा",
+    "alreadyHaveAccount": "आधीपासून खाते आहे?",
+    "dontHaveAccount": "खाते नाही?",
+    "createAccount": "खाते तयार करा"
+  },
+  "listing": {
+    "create": "यादी तयार करा",
+    "edit": "यादी संपादित करा",
+    "title": "शीर्षक",
+    "description": "वर्णन",
+    "category": "श्रेणी",
+    "type": "प्रकार",
+    "condition": "स्थिती",
+    "price": "किंमत",
+    "images": "प्रतिमा",
+    "sell": "विक्री",
+    "rent": "भाडे",
+    "free": "मोफत",
+    "new": "नवीन",
+    "likeNew": "नवीन सारखे",
+    "good": "चांगले",
+    "fair": "ठीक",
+    "poor": "खराब",
+    "contactOwner": "मालकाशी संपर्क साधा",
+    "views": "दृश्ये",
+    "posted": "पोस्ट केले",
+    "location": "स्थान"
+  },
+  "search": {
+    "searchPlaceholder": "पुस्तके, नोट्स शोधा...",
+    "filters": "फिल्टर",
+    "category": "श्रेणी",
+    "priceRange": "किंमत श्रेणी",
+    "condition": "स्थिती",
+    "radius": "त्रिज्या (किमी)",
+    "freeOnly": "फक्त मोफत",
+    "noResults": "निकाल सापडले नाहीत",
+    "results": "निकाल"
+  },
+  "profile": {
+    "myProfile": "माझी प्रोफाइल",
+    "myListings": "माझ्या याद्या",
+    "settings": "सेटिंग्ज",
+    "editProfile": "प्रोफाइल संपादित करा",
+    "changeLanguage": "भाषा बदला"
+  },
+  "navigation": {
+    "home": "होम",
+    "browse": "ब्राउझ करा",
+    "create": "तयार करा",
+    "profile": "प्रोफाइल"
+  },
+  "errors": {
+    "required": "हे फील्ड आवश्यक आहे",
+    "invalidEmail": "अवैध ईमेल पत्ता",
+    "invalidPhone": "अवैध फोन नंबर",
+    "passwordTooShort": "पासवर्ड किमान 8 वर्णांचा असावा",
+    "somethingWentWrong": "काहीतरी चुकीचे झाले",
+    "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा."
+  }
+}

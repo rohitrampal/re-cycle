@@ -1,0 +1,1209 @@
+openapi: 3.0.3
+info:
+  title: EduCycle API
+  description: |
+    Academic Resource Exchange Platform API
+    
+    This API allows students to exchange academic resources such as books and notes.
+    Features include location-based discovery, institution-based filtering, and secure authentication.
+    
+    ## Authentication
+    The API uses JWT (JSON Web Tokens) for authentication. Include the access token in the Authorization header:
+    ```
+    Authorization: Bearer <access_token>
+    ```
+    
+    ## Rate Limiting
+    - General endpoints: 100 requests per minute
+    - Auth endpoints: 5 requests per 15 minutes
+    - Search endpoints: 30 requests per minute
+    
+    ## Base URL
+    - Development: `http://localhost:3001/api`
+    - Production: `https://api.educycle.com/api`
+  version: 1.0.0
+  contact:
+    name: EduCycle Support
+    email: support@educycle.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3001/api
+    description: Development server
+  - url: https://api.educycle.com/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User profile management
+  - name: Listings
+    description: Book and note listings
+  - name: Location
+    description: Location-based services
+  - name: Institutions
+    description: School and college information
+  - name: Upload
+    description: S3 file uploads (listings, avatar). See S3_SETUP.md for configuration.
+
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Create a new user account with email and password
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: student@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: Must contain uppercase, lowercase, and number
+                  example: SecurePass123
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 255
+                  example: John Doe
+                phone:
+                  type: string
+                  pattern: '^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$'
+                  example: "+1234567890"
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      description: Authenticate user and receive access tokens
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: student@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+              description: HTTP-only refresh token cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Get authenticated user's profile
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Get a new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: New access token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      description: Clear refresh token cookie
+      operationId: logout
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Get public user profile by ID
+      operationId: getUserById
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /users/me:
+    patch:
+      tags:
+        - Users
+      summary: Update own profile
+      description: Update authenticated user's profile
+      operationId: updateProfile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                  maxLength: 255
+                phone:
+                  type: string
+                bio:
+                  type: string
+                  maxLength: 1000
+                institutionId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /listings:
+    post:
+      tags:
+        - Listings
+      summary: Create listing
+      description: Create a new book or note listing
+      operationId: createListing
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListing'
+      responses:
+        '201':
+          description: Listing created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /listings/{id}:
+    get:
+      tags:
+        - Listings
+      summary: Get listing by ID
+      description: |
+        Get detailed listing information. By default returns a flat listing (no nested user).
+        Set **include=user** to include the listing owner (id, name, email, phone, verified) in the response.
+      operationId: getListingById
+      parameters:
+        - $ref: '#/components/parameters/ListingId'
+        - name: include
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [user]
+          description: Include nested user object when set to "user"
+      responses:
+        '200':
+          description: Listing details (flat or with user when include=user)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+              examples:
+                flat:
+                  summary: Without include
+                  value:
+                    success: true
+                    data:
+                      id: "uuid"
+                      user_id: "uuid"
+                      title: "Class 10 Mathematics"
+                      category_code: "school_9_10"
+                      type: "sell"
+                      price: 200
+                withUser:
+                  summary: With include=user
+                  value:
+                    success: true
+                    data:
+                      id: "uuid"
+                      user_id: "uuid"
+                      title: "Class 10 Mathematics"
+                      user:
+                        id: "uuid"
+                        name: "John Doe"
+                        email: "john@example.com"
+                        verified: true
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    patch:
+      tags:
+        - Listings
+      summary: Update listing
+      description: Update own listing (only owner can update)
+      operationId: updateListing
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ListingId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateListing'
+      responses:
+        '200':
+          description: Listing updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+    delete:
+      tags:
+        - Listings
+      summary: Delete listing
+      description: Delete own listing (only owner can delete)
+      operationId: deleteListing
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ListingId'
+      responses:
+        '200':
+          description: Listing deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /listings/search:
+    get:
+      tags:
+        - Listings
+      summary: Search listings
+      description: Search listings with filters and location
+      operationId: searchListings
+      parameters:
+        - name: categoryCode
+          in: query
+          schema:
+            $ref: '#/components/schemas/CategoryCode'
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [sell, rent, free]
+        - name: condition
+          in: query
+          schema:
+            type: string
+            enum: [new, like_new, good, fair, poor]
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+            minimum: 0
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+            minimum: 0
+        - name: freeOnly
+          in: query
+          schema:
+            type: boolean
+        - name: radius
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 100
+          description: Radius in kilometers (requires latitude/longitude)
+        - name: latitude
+          in: query
+          schema:
+            type: number
+            minimum: -90
+            maximum: 90
+        - name: longitude
+          in: query
+          schema:
+            type: number
+            minimum: -180
+            maximum: 180
+        - name: institutionId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: query
+          in: query
+          schema:
+            type: string
+            maxLength: 255
+          description: Full-text search query
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursorId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Listing UUID for cursor (use with cursorCreatedAt for next page)
+        - name: cursorCreatedAt
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: ISO timestamp of last item for next page
+        - name: includeTotal
+          in: query
+          schema:
+            type: boolean
+            default: false
+          description: Include total matching count (extra query; use sparingly)
+      responses:
+        '200':
+          description: Search results (cursor-based pagination)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResult'
+
+  /listings/me:
+    get:
+      tags:
+        - Listings
+      summary: Get my listings
+      description: Get authenticated user's listings
+      operationId: getMyListings
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: isActive
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: User's listings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedListings'
+
+  /location:
+    post:
+      tags:
+        - Location
+      summary: Update user location
+      description: Update authenticated user's location for nearby searches
+      operationId: updateLocation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - latitude
+                - longitude
+              properties:
+                latitude:
+                  type: number
+                  minimum: -90
+                  maximum: 90
+                  example: 28.6139
+                longitude:
+                  type: number
+                  minimum: -180
+                  maximum: 180
+                  example: 77.2090
+      responses:
+        '200':
+          description: Location updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /location/nearby:
+    get:
+      tags:
+        - Location
+      summary: Get nearby listings
+      description: Get listings within radius of user's location
+      operationId: getNearbyListings
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: radius
+          in: query
+          schema:
+            type: number
+            minimum: 0
+            maximum: 100
+            default: 10
+          description: Radius in kilometers
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        '200':
+          description: Nearby listings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /upload/listings:
+    post:
+      tags:
+        - Upload
+      summary: Upload single listing image
+      description: Upload one image to S3. Resized and thumbnail generated. Returns url and thumbnailUrl for use in listing images array. Max 10MB; JPEG/PNG/WebP.
+      operationId: uploadListingImage
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Image uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+                      thumbnailUrl:
+                        type: string
+                        format: uri
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /upload/listings/multiple:
+    post:
+      tags:
+        - Upload
+      summary: Upload multiple listing images
+      description: Upload up to 5 images to S3. Returns array of { url, thumbnailUrl }. Max 10MB per file; JPEG/PNG/WebP.
+      operationId: uploadListingImagesMultiple
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        '200':
+          description: Images uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      urls:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            url:
+                              type: string
+                              format: uri
+                            thumbnailUrl:
+                              type: string
+                              format: uri
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /upload/avatar:
+    post:
+      tags:
+        - Upload
+      summary: Upload user avatar
+      description: Upload one image as user avatar. Returns url for the avatar. Max 10MB; JPEG/PNG/WebP.
+      operationId: uploadAvatar
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Avatar uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        format: uri
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /upload/{key}:
+    delete:
+      tags:
+        - Upload
+      summary: Delete file by S3 key
+      description: Delete an object from S3 by key (e.g. from a previously returned URL path). Use when removing an image from a listing or changing avatar.
+      operationId: deleteUploadByKey
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: key
+          in: path
+          required: true
+          schema:
+            type: string
+          description: S3 object key
+      responses:
+        '200':
+          description: File deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /institutions/search:
+    get:
+      tags:
+        - Institutions
+      summary: Search institutions
+      description: Search for schools and colleges
+      operationId: searchInstitutions
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 255
+          description: Search query
+      responses:
+        '200':
+          description: Institution search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT access token
+
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: User UUID
+    ListingId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: Listing UUID
+
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
+
+    AuthResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+                accessToken:
+                  type: string
+                  description: JWT access token (expires in 15 minutes)
+                refreshToken:
+                  type: string
+                  description: JWT refresh token (expires in 7 days)
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        phone:
+          type: string
+          nullable: true
+
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            bio:
+              type: string
+              nullable: true
+            institutionId:
+              type: string
+              format: uuid
+              nullable: true
+            verified:
+              type: boolean
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+
+    CategoryCode:
+      type: string
+      enum:
+        - school_1_5
+        - school_6_8
+        - school_9_10
+        - school_11_12_science
+        - school_11_12_commerce
+        - school_11_12_arts
+        - college_ba
+        - college_bsc
+        - college_bcom
+        - college_bba
+        - college_bca
+        - college_btech
+        - college_mba
+        - college_law
+        - college_medical
+        - college_pharmacy
+        - competitive_upsc
+        - competitive_ssc
+        - competitive_banking
+        - competitive_railways
+        - competitive_defence
+        - competitive_state
+
+    CreateListing:
+      type: object
+      required:
+        - title
+        - categoryCode
+        - type
+        - images
+        - latitude
+        - longitude
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 5000
+        categoryCode:
+          $ref: '#/components/schemas/CategoryCode'
+        type:
+          type: string
+          enum: [sell, rent, free]
+        condition:
+          type: string
+          enum: [new, like_new, good, fair, poor]
+        price:
+          type: number
+          minimum: 0
+          maximum: 1000000
+          description: Required for sell/rent, not allowed for free
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          maxItems: 5
+        latitude:
+          type: number
+          minimum: -90
+          maximum: 90
+        longitude:
+          type: number
+          minimum: -180
+          maximum: 180
+        institutionId:
+          type: string
+          format: uuid
+
+    UpdateListing:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 255
+        description:
+          type: string
+          maxLength: 5000
+        categoryCode:
+          $ref: '#/components/schemas/CategoryCode'
+        type:
+          type: string
+          enum: [sell, rent, free]
+        condition:
+          type: string
+          enum: [new, like_new, good, fair, poor]
+        price:
+          type: number
+          minimum: 0
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          maxItems: 5
+        latitude:
+          type: number
+        longitude:
+          type: number
+        isActive:
+          type: boolean
+
+    Listing:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryCode'
+        type:
+          type: string
+          enum: [sell, rent, free]
+        condition:
+          type: string
+          enum: [new, like_new, good, fair, poor]
+        price:
+          type: number
+          nullable: true
+        images:
+          type: array
+          items:
+            type: string
+        location:
+          type: object
+          properties:
+            latitude:
+              type: number
+            longitude:
+              type: number
+            address:
+              type: string
+        institutionId:
+          type: string
+          format: uuid
+          nullable: true
+        isActive:
+          type: boolean
+        views:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ListingWithUser:
+      allOf:
+        - $ref: '#/components/schemas/Listing'
+        - type: object
+          properties:
+            user:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                email:
+                  type: string
+                phone:
+                  type: string
+                verified:
+                  type: boolean
+
+    SearchResult:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                listings:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Listing'
+                limit:
+                  type: integer
+                hasMore:
+                  type: boolean
+                nextCursor:
+                  type: object
+                  nullable: true
+                  properties:
+                    cursorId:
+                      type: string
+                      format: uuid
+                    cursorCreatedAt:
+                      type: string
+                      format: date-time
+                total:
+                  type: integer
+                  description: Present only when includeTotal=true
+
+    PaginatedListings:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Listing'
+                pagination:
+                  type: object
+                  properties:
+                    page:
+                      type: integer
+                    limit:
+                      type: integer
+                    total:
+                      type: integer
+                    totalPages:
+                      type: integer
+                    hasMore:
+                      type: boolean
+
+  responses:
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: VALIDATION_ERROR
+              message: Validation failed
+              details:
+                - path: email
+                  message: Invalid email address
+
+    UnauthorizedError:
+      description: Authentication required or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: UNAUTHORIZED
+              message: Authentication required
+
+    ForbiddenError:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: FORBIDDEN
+              message: You do not have permission to access this resource
+
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: NOT_FOUND
+              message: Resource not found
+
+    ConflictError:
+      description: Resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: ALREADY_EXISTS
+              message: User already exists
+
+    RateLimitError:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            error:
+              code: RATE_LIMIT_EXCEEDED
+              message: Too many requests. Please try again later.

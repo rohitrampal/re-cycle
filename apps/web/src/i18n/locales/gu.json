@@ -1,0 +1,90 @@
+{
+  "common": {
+    "appName": "EduCycle",
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "ભૂલ",
+    "success": "સફળ",
+    "cancel": "રદ કરો",
+    "save": "સાચવો",
+    "delete": "કાઢી નાખો",
+    "edit": "સંપાદિત કરો",
+    "search": "શોધો",
+    "filter": "ફિલ્ટર",
+    "clear": "સાફ કરો",
+    "apply": "લાગુ કરો",
+    "close": "બંધ કરો",
+    "submit": "સબમિટ કરો",
+    "next": "આગળ",
+    "previous": "પહેલાં",
+    "back": "પાછળ"
+  },
+  "auth": {
+    "login": "લૉગિન",
+    "logout": "લૉગઆઉટ",
+    "register": "નોંધણી",
+    "email": "ઇમેઇલ",
+    "password": "પાસવર્ડ",
+    "name": "નામ",
+    "phone": "ફોન",
+    "forgotPassword": "પાસવર્ડ ભૂલી ગયા?",
+    "rememberMe": "મને યાદ રાખો",
+    "alreadyHaveAccount": "પહેલેથી એકાઉન્ટ છે?",
+    "dontHaveAccount": "એકાઉન્ટ નથી?",
+    "createAccount": "એકાઉન્ટ બનાવો"
+  },
+  "listing": {
+    "create": "લિસ્ટિંગ બનાવો",
+    "edit": "લિસ્ટિંગ સંપાદિત કરો",
+    "title": "શીર્ષક",
+    "description": "વર્ણન",
+    "category": "શ્રેણી",
+    "type": "પ્રકાર",
+    "condition": "સ્થિતિ",
+    "price": "કિંમત",
+    "images": "છબીઓ",
+    "sell": "વેચો",
+    "rent": "ભાડે આપો",
+    "free": "મફત",
+    "new": "નવું",
+    "likeNew": "નવા જેવું",
+    "good": "સારું",
+    "fair": "ઠીક",
+    "poor": "ખરાબ",
+    "contactOwner": "માલિકનો સંપર્ક કરો",
+    "views": "દૃશ્યો",
+    "posted": "પોસ્ટ કર્યું",
+    "location": "સ્થાન"
+  },
+  "search": {
+    "searchPlaceholder": "પુસ્તકો, નોંધો શોધો...",
+    "filters": "ફિલ્ટર",
+    "category": "શ્રેણી",
+    "priceRange": "કિંમત શ્રેણી",
+    "condition": "સ્થિતિ",
+    "radius": "ત્રિજ્યા (કિમી)",
+    "freeOnly": "માત્ર મફત",
+    "noResults": "કોઈ પરિણામ મળ્યું નથી",
+    "results": "પરિણામો"
+  },
+  "profile": {
+    "myProfile": "મારી પ્રોફાઇલ",
+    "myListings": "મારી યાદીઓ",
+    "settings": "સેટિંગ્સ",
+    "editProfile": "પ્રોફાઇલ સંપાદિત કરો",
+    "changeLanguage": "ભાષા બદલો"
+  },
+  "navigation": {
+    "home": "હોમ",
+    "browse": "બ્રાઉઝ કરો",
+    "create": "બનાવો",
+    "profile": "પ્રોફાઇલ"
+  },
+  "errors": {
+    "required": "આ ફીલ્ડ જરૂરી છે",
+    "invalidEmail": "અમાન્ય ઇમેઇલ સરનામું",
+    "invalidPhone": "અમાન્ય ફોન નંબર",
+    "passwordTooShort": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
+    "somethingWentWrong": "કંઈક ખોટું થયું",
+    "networkError": "નેટવર્ક ભૂલ. કૃપા કરીને તમારું કનેક્શન તપાસો."
+  }
+}
