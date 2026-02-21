@@ -47,9 +47,23 @@ export const userApi = {
   },
 };
 
+// Create listing body shape expected by the API (categoryCode, flat lat/lng)
+export interface CreateListingBody {
+  title: string;
+  description?: string;
+  categoryCode: string;
+  type: 'sell' | 'rent' | 'free';
+  condition?: string;
+  price?: number;
+  images: string[];
+  latitude: number;
+  longitude: number;
+  institutionId?: string;
+}
+
 // Listing endpoints
 export const listingApi = {
-  create: (data: Omit<Listing, 'id' | 'userId' | 'createdAt' | 'updatedAt' | 'views' | 'isActive'>): Promise<ApiResponse<Listing>> =>
+  create: (data: CreateListingBody): Promise<ApiResponse<Listing>> =>
     apiClient.post('/listings', data),
 
   update: (id: string, data: Partial<Listing>): Promise<ApiResponse<Listing>> =>
@@ -70,17 +84,13 @@ export const listingApi = {
   uploadListingImages: (files: File[]): Promise<ApiResponse<{ urls: Array<{ url: string; thumbnailUrl?: string }> }>> => {
     const formData = new FormData();
     files.forEach((file) => formData.append('file', file));
-    return apiClient.post('/upload/listings/multiple', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return apiClient.post('/upload/listings/multiple', formData);
   },
 
   uploadAvatar: (file: File): Promise<ApiResponse<{ url: string }>> => {
     const formData = new FormData();
     formData.append('file', file);
-    return apiClient.post('/upload/avatar', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
+    return apiClient.post('/upload/avatar', formData);
   },
 };
 

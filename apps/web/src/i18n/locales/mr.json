@@ -30,7 +30,9 @@
     "rememberMe": "मला लक्षात ठेवा",
     "alreadyHaveAccount": "आधीपासून खाते आहे?",
     "dontHaveAccount": "खाते नाही?",
-    "createAccount": "खाते तयार करा"
+    "createAccount": "खाते तयार करा",
+    "showPassword": "पासवर्ड दाखवा",
+    "hidePassword": "पासवर्ड लपवा"
   },
   "listing": {
     "create": "यादी तयार करा",
@@ -85,6 +87,12 @@
     "invalidPhone": "अवैध फोन नंबर",
     "passwordTooShort": "पासवर्ड किमान 8 वर्णांचा असावा",
     "somethingWentWrong": "काहीतरी चुकीचे झाले",
-    "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा."
+    "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा.",
+    "priceMin": "किंमत 0 पेक्षा कमी असू शकत नाही.",
+    "priceRequiredSellRent": "विकण्यासाठी किंवा भाड्याने देण्यासाठी किंमत आवश्यक आहे आणि 0 पेक्षा जास्त असणे आवश्यक आहे.",
+    "uploadInvalidFileType": "कृपया फक्त JPEG, PNG किंवा WebP प्रतिमा वापरा.",
+    "uploadFileTooLarge": "फाइल खूप मोठी आहे. कमाल आकार 10 MB आहे.",
+    "uploadMaxFiles": "कमाल 5 प्रतिमा परवानगी आहे.",
+    "uploadNoFile": "कोणतीही प्रतिमा निवडलेली नाही. कृपया किमान एक प्रतिमा जोडा."
   }
 }

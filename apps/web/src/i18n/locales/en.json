@@ -32,7 +32,9 @@
     "rememberMe": "Remember Me",
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
-    "createAccount": "Create Account"
+    "createAccount": "Create Account",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "listing": {
     "create": "Create Listing",
@@ -44,6 +46,9 @@
     "condition": "Condition",
     "price": "Price",
     "images": "Images",
+    "selectImages": "Select images",
+    "atLeastOneImage": "At least one image is required (max 5)",
+    "removeImage": "Remove",
     "sell": "Sell",
     "rent": "Rent",
     "free": "Free",
@@ -55,7 +60,31 @@
     "contactOwner": "Contact Owner",
     "views": "Views",
     "posted": "Posted",
-    "location": "Location"
+    "location": "Location",
+    "categories": {
+      "school_1_5": "School 1–5",
+      "school_6_8": "School 6–8",
+      "school_9_10": "School 9–10",
+      "school_11_12_science": "School 11–12 Science",
+      "school_11_12_commerce": "School 11–12 Commerce",
+      "school_11_12_arts": "School 11–12 Arts",
+      "college_ba": "College BA",
+      "college_bsc": "College BSc",
+      "college_bcom": "College BCom",
+      "college_bba": "College BBA",
+      "college_bca": "College BCA",
+      "college_btech": "College BTech",
+      "college_mba": "College MBA",
+      "college_law": "Law",
+      "college_medical": "Medical",
+      "college_pharmacy": "Pharmacy",
+      "competitive_upsc": "UPSC",
+      "competitive_ssc": "SSC",
+      "competitive_banking": "Banking",
+      "competitive_railways": "Railways",
+      "competitive_defence": "Defence",
+      "competitive_state": "State Exams"
+    }
   },
   "search": {
     "searchPlaceholder": "Search books, notes...",
@@ -87,6 +116,13 @@
     "invalidPhone": "Invalid phone number",
     "passwordTooShort": "Password must be at least 8 characters",
     "somethingWentWrong": "Something went wrong",
-    "networkError": "Network error. Please check your connection."
+    "networkError": "Network error. Please check your connection.",
+    "priceMin": "Price cannot be less than 0.",
+    "priceRequiredSellRent": "Price is required and must be greater than 0 for sell or rent.",
+    "uploadInvalidFileType": "Please use only JPEG, PNG, or WebP images.",
+    "uploadFileEmpty": "File is empty or invalid. Please choose a valid image file.",
+    "uploadFileTooLarge": "File is too large. Maximum size is 10 MB.",
+    "uploadMaxFiles": "Maximum 5 images allowed.",
+    "uploadNoFile": "No image selected. Please add at least one image."
   }
 }

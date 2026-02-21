@@ -30,7 +30,9 @@
     "rememberMe": "मुझे याद रखें",
     "alreadyHaveAccount": "पहले से खाता है?",
     "dontHaveAccount": "खाता नहीं है?",
-    "createAccount": "खाता बनाएं"
+    "createAccount": "खाता बनाएं",
+    "showPassword": "पासवर्ड दिखाएं",
+    "hidePassword": "पासवर्ड छिपाएं"
   },
   "listing": {
     "create": "सूची बनाएं",
@@ -53,7 +55,31 @@
     "contactOwner": "मालिक से संपर्क करें",
     "views": "दृश्य",
     "posted": "पोस्ट किया गया",
-    "location": "स्थान"
+    "location": "स्थान",
+    "categories": {
+      "school_1_5": "स्कूल 1–5",
+      "school_6_8": "स्कूल 6–8",
+      "school_9_10": "स्कूल 9–10",
+      "school_11_12_science": "स्कूल 11–12 विज्ञान",
+      "school_11_12_commerce": "स्कूल 11–12 वाणिज्य",
+      "school_11_12_arts": "स्कूल 11–12 कला",
+      "college_ba": "कॉलेज BA",
+      "college_bsc": "कॉलेज BSc",
+      "college_bcom": "कॉलेज BCom",
+      "college_bba": "कॉलेज BBA",
+      "college_bca": "कॉलेज BCA",
+      "college_btech": "कॉलेज BTech",
+      "college_mba": "कॉलेज MBA",
+      "college_law": "कानून",
+      "college_medical": "मेडिकल",
+      "college_pharmacy": "फार्मेसी",
+      "competitive_upsc": "UPSC",
+      "competitive_ssc": "SSC",
+      "competitive_banking": "बैंकिंग",
+      "competitive_railways": "रेलवे",
+      "competitive_defence": "रक्षा",
+      "competitive_state": "राज्य परीक्षा"
+    }
   },
   "search": {
     "searchPlaceholder": "किताबें, नोट्स खोजें...",
@@ -85,6 +111,12 @@
     "invalidPhone": "अमान्य फोन नंबर",
     "passwordTooShort": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
     "somethingWentWrong": "कुछ गलत हो गया",
-    "networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।"
+    "networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
+    "priceMin": "कीमत 0 से कम नहीं हो सकती।",
+    "priceRequiredSellRent": "बेचने या किराए पर देने के लिए कीमत आवश्यक है और 0 से अधिक होनी चाहिए।",
+    "uploadInvalidFileType": "कृपया केवल JPEG, PNG या WebP छवियां उपयोग करें।",
+    "uploadFileTooLarge": "फ़ाइल बहुत बड़ी है। अधिकतम आकार 10 MB है।",
+    "uploadMaxFiles": "अधिकतम 5 छवियों की अनुमति है।",
+    "uploadNoFile": "कोई छवि नहीं चुनी गई। कृपया कम से कम एक छवि जोड़ें।"
   }
 }

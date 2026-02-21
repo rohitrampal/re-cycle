@@ -10,6 +10,7 @@ import { db } from './database/improved';
 import { RATE_LIMITS } from './constants';
 import { getMetrics } from './utils/metrics';
 import { getCacheBackend } from './services/cache.service';
+import fp from 'fastify-plugin';
 import validationPlugin from './plugins/validation';
 import errorHandlerPlugin from './plugins/error-handler';
 import requestLoggerPlugin, { errSerializer } from './plugins/request-logger';
@@ -84,8 +85,9 @@ server.register(cookie, {
 // CSRF: validate Origin/Referer for state-changing requests
 server.register(csrfPlugin, { allowedOrigins: config.allowedOrigins });
 
-// Validation plugin
-server.register(validationPlugin);
+// Validation plugin: wrap with fastify-plugin so it runs in root context and decorates the root.
+// Otherwise register() runs it in a child context and route plugins (users, listings, etc.) never see .validate.
+server.register(fp(validationPlugin), { name: 'validation' });
 
 server.register(errorHandlerPlugin);
 server.register(requestLoggerPlugin);
@@ -151,15 +153,16 @@ server.get('/metrics', async (request, reply) => {
 });
 
 // API routes (auth with stricter rate limit: 5 per 15 min)
+// Root has .validate (via fp(validationPlugin)); this scope's instance inherits it.
 server.register(
   async (instance) => {
-    instance.register(rateLimit, {
+    await instance.register(rateLimit, {
       max: RATE_LIMITS.AUTH.max,
       timeWindow: RATE_LIMITS.AUTH.timeWindow,
     });
-    instance.register(authRoutes, { prefix: '/api/auth' });
+    await instance.register(authRoutes);
   },
-  { prefix: '/' }
+  { prefix: '/api/auth' }
 );
 
 server.register(userRoutes, { prefix: '/api/users' });
@@ -201,6 +204,9 @@ const start = async () => {
     server.log.info(`Server listening on ${config.host}:${config.port}`);
   } catch (err) {
     server.log.error(err);
+    if (err instanceof Error && err.message.includes('Cannot connect to PostgreSQL')) {
+      server.log.info('Tip: Start Postgres with "docker-compose up -d postgres" or ensure PostgreSQL is running and .env DB_* vars are correct.');
+    }
     process.exit(1);
   }
 };

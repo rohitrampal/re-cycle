@@ -14,6 +14,7 @@ import {
   Home,
 } from "lucide-react";
 import { useUIStore } from "@/store/ui-store";
+import { SUPPORTED_LANG_CODES, LANGUAGE_NAMES } from "@/i18n/config";
 import { useAuthStore } from "@/store/auth-store";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,8 @@ export function Navbar() {
   const location = useLocation();
   const theme = useUIStore((s) => s.theme);
   const setTheme = useUIStore((s) => s.setTheme);
+  const language = useUIStore((s) => s.language);
+  const setLanguage = useUIStore((s) => s.setLanguage);
   const toggleSidebar = useUIStore((s) => s.toggleSidebar);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const logout = useAuthStore((s) => s.logout);
@@ -116,13 +119,16 @@ export function Navbar() {
                 <Globe className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[140px]">
-              <DropdownMenuItem onClick={() => useUIStore.getState().setLanguage("en")}>
-                English
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => useUIStore.getState().setLanguage("hi")}>
-                हिंदी
-              </DropdownMenuItem>
+            <DropdownMenuContent align="end" className="min-w-[160px] max-h-[70vh] overflow-y-auto">
+              {SUPPORTED_LANG_CODES.map((code) => (
+                <DropdownMenuItem
+                  key={code}
+                  onClick={() => setLanguage(code)}
+                  className={cn(language === code && "bg-accent")}
+                >
+                  {LANGUAGE_NAMES[code]}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
           {isAuthenticated ? (

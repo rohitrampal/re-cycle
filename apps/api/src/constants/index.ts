@@ -37,6 +37,7 @@ export const PAGINATION = {
 
 export const FILE_UPLOAD = {
   MAX_SIZE: 10 * 1024 * 1024, // 10MB
+  MIN_SIZE: 100, // Reject empty or truncated uploads (smallest valid JPEG/PNG/WebP is larger)
   MAX_FILES: 5,
   ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp'],
 } as const;

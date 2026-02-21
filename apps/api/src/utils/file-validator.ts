@@ -5,6 +5,15 @@ import { FILE_UPLOAD } from '../constants';
  * Validate uploaded file
  */
 export function validateFile(buffer: Buffer, filename: string): void {
+  // Reject empty or truncated uploads (e.g. multipart sent without file body)
+  if (buffer.length < FILE_UPLOAD.MIN_SIZE) {
+    throw new AppError(
+      ErrorCode.VALIDATION_ERROR,
+      'File is empty or invalid. Please upload a valid image file.',
+      400
+    );
+  }
+
   // Check file size
   if (buffer.length > FILE_UPLOAD.MAX_SIZE) {
     throw new AppError(
@@ -31,6 +40,14 @@ export function validateFile(buffer: Buffer, filename: string): void {
  * Validate MIME type from buffer
  */
 export async function validateMimeType(buffer: Buffer): Promise<void> {
+  // Need at least 12 bytes for WebP magic number check
+  if (buffer.length < 12) {
+    throw new AppError(
+      ErrorCode.VALIDATION_ERROR,
+      'File is empty or invalid. Please upload a valid image file.',
+      400
+    );
+  }
   // Check magic numbers
   const isJpeg = buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   const isPng = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;

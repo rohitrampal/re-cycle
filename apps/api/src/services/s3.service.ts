@@ -67,12 +67,25 @@ class S3Service {
     options: UploadOptions = {}
   ): Promise<UploadResult> {
     try {
-      // Validate file
+      // Validate file (size + extension)
       validateFile(file, filename);
-      await validateMimeType(file);
 
-      // Detect MIME type
-      const mimeType = await this.detectMimeType(file);
+      // Validate MIME: try Sharp first (accepts more valid images e.g. JPEG with EXIF), fallback to magic bytes
+      const sharpFormat = await this.detectFormatWithSharp(file);
+      let mimeType: string;
+      if (sharpFormat) {
+        if (!['jpeg', 'png', 'webp'].includes(sharpFormat)) {
+          throw new AppError(
+            ErrorCode.VALIDATION_ERROR,
+            'Invalid file type. Only JPEG, PNG, and WebP images are allowed',
+            400
+          );
+        }
+        mimeType = sharpFormat === 'jpeg' ? 'image/jpeg' : sharpFormat === 'png' ? 'image/png' : 'image/webp';
+      } else {
+        await validateMimeType(file);
+        mimeType = await this.detectMimeType(file);
+      }
 
       const folder = options.folder || 'uploads';
       const timestamp = Date.now();
@@ -239,6 +252,19 @@ class S3Service {
       
       // Remove leading slash
       return pathname.substring(1);
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Try to detect image format using Sharp (accepts more valid images than magic bytes alone).
+   * Returns format string (e.g. 'jpeg', 'png', 'webp') or null if Sharp cannot read the file.
+   */
+  private async detectFormatWithSharp(buffer: Buffer): Promise<string | null> {
+    try {
+      const metadata = await sharp(buffer).metadata();
+      return metadata.format ?? null;
     } catch {
       return null;
     }

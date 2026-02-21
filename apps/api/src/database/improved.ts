@@ -41,28 +41,36 @@ class ImprovedDatabase {
   }
 
   /**
-   * Connect to database with retry logic
+   * Connect to database with retry logic.
+   * On failure throws an error with actionable hints (e.g. start Postgres, check .env).
    */
   async connect(): Promise<void> {
     const maxRetries = 5;
-    let retries = 0;
+    const { host, port, database, user } = config.database;
+    let lastError: unknown;
 
-    while (retries < maxRetries) {
+    for (let retries = 0; retries < maxRetries; retries++) {
       try {
         await this.pool.query('SELECT NOW()');
         console.log('Database connected successfully');
         return;
       } catch (error) {
-        retries++;
-        if (retries >= maxRetries) {
-          console.error('Database connection failed after retries:', error);
-          throw error;
+        lastError = error;
+        if (retries < maxRetries - 1) {
+          const delay = Math.min(1000 * Math.pow(2, retries + 1), 10000);
+          console.log(`Database connection failed, retrying in ${delay}ms...`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
-        const delay = Math.min(1000 * Math.pow(2, retries), 10000); // Exponential backoff
-        console.log(`Database connection failed, retrying in ${delay}ms...`);
-        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
+
+    const hint =
+      'Is PostgreSQL running? If using Docker: docker-compose up -d postgres. Check DB_HOST, DB_PORT, DB_USER, DB_NAME in apps/api/.env';
+    const message = `Cannot connect to PostgreSQL at ${host}:${port} (database=${database}, user=${user}). ${hint}`;
+    const err = new Error(message);
+    (err as Error & { cause?: unknown }).cause = lastError;
+    console.error('Database connection failed after retries:', message);
+    throw err;
   }
 
   /**

@@ -30,7 +30,9 @@
     "rememberMe": "મને યાદ રાખો",
     "alreadyHaveAccount": "પહેલેથી એકાઉન્ટ છે?",
     "dontHaveAccount": "એકાઉન્ટ નથી?",
-    "createAccount": "એકાઉન્ટ બનાવો"
+    "createAccount": "એકાઉન્ટ બનાવો",
+    "showPassword": "પાસવર્ડ બતાવો",
+    "hidePassword": "પાસવર્ડ છુપાવો"
   },
   "listing": {
     "create": "લિસ્ટિંગ બનાવો",
@@ -85,6 +87,12 @@
     "invalidPhone": "અમાન્ય ફોન નંબર",
     "passwordTooShort": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
     "somethingWentWrong": "કંઈક ખોટું થયું",
-    "networkError": "નેટવર્ક ભૂલ. કૃપા કરીને તમારું કનેક્શન તપાસો."
+    "networkError": "નેટવર્ક ભૂલ. કૃપા કરીને તમારું કનેક્શન તપાસો.",
+    "priceMin": "કિંમત 0 કરતા ઓછી ન હોઈ શકે.",
+    "priceRequiredSellRent": "વેચાણ અથવા ભાડા માટે કિંમત જરૂરી છે અને 0 કરતા વધારે હોવી જોઈએ.",
+    "uploadInvalidFileType": "કૃપા કરીને ફક્ત JPEG, PNG અથવા WebP ઇમેજો વાપરો.",
+    "uploadFileTooLarge": "ફાઇલ ખૂબ મોટી છે. મહત્તમ કદ 10 MB છે.",
+    "uploadMaxFiles": "મહત્તમ 5 ઇમેજો મંજૂર છે.",
+    "uploadNoFile": "કોઈ ઇમેજ પસંદ નથી. કૃપા કરીને ઓછામાં ઓછી એક ઇમેજ ઉમેરો."
   }
 }

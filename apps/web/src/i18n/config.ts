@@ -29,13 +29,32 @@ const resources = {
   ml: { translation: ml }
 };
 
+/** Supported language codes (used by i18n and language selector). */
+export const SUPPORTED_LANG_CODES = ['en', 'hi', 'mr', 'gu', 'pa', 'ur', 'bn', 'te', 'ta', 'kn', 'or', 'ml'] as const;
+
+/** Display names for the language selector (code -> native name). */
+export const LANGUAGE_NAMES: Record<(typeof SUPPORTED_LANG_CODES)[number], string> = {
+  en: 'English',
+  hi: 'हिंदी',
+  mr: 'मराठी',
+  gu: 'ગુજરાતી',
+  pa: 'ਪੰਜਾਬੀ',
+  ur: 'اردو',
+  bn: 'বাংলা',
+  te: 'తెలుగు',
+  ta: 'தமிழ்',
+  kn: 'ಕನ್ನಡ',
+  or: 'ଓଡ଼ିଆ',
+  ml: 'മലയാളം'
+};
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
     fallbackLng: 'en',
-    supportedLngs: ['en', 'hi', 'mr', 'gu', 'pa', 'ur', 'bn', 'te', 'ta', 'kn', 'or', 'ml'],
+    supportedLngs: SUPPORTED_LANG_CODES,
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
       caches: ['localStorage']

@@ -1,12 +1,165 @@
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
+import { ImagePlus, X } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LISTING_CATEGORIES } from "@/lib/listing-categories";
+import { ensureNonNegative, isNonNegative } from "@/lib/validation";
+import type { ListingCategory, ListingType, ListingCondition } from "@recycle/shared";
+import { listingApi } from "@/lib/api/endpoints";
+import { getApiErrorDisplayMessage } from "@/lib/api/errors";
+
+const MAX_IMAGES = 5;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB, match backend
+const ACCEPT_IMAGES = "image/jpeg,image/png,image/webp";
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export default function CreateListingPage() {
   const { t } = useTranslation();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<ListingCategory | "">("");
+  const [type, setType] = useState<ListingType>("sell");
+  const [condition, setCondition] = useState<ListingCondition>("good");
+  const [priceInput, setPriceInput] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const priceNum = priceInput === "" ? undefined : parseFloat(priceInput);
+  const priceValid = priceInput === "" || (Number.isNaN(priceNum!) ? false : isNonNegative(priceNum!));
+  const priceForSubmit = priceInput === "" ? undefined : ensureNonNegative(priceInput);
+  const showPrice = type === "sell" || type === "rent";
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const v = e.target.value;
+    if (v === "" || v === "-" || /^-?\d*\.?\d*$/.test(v)) {
+      setPriceInput(v);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null);
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    const valid: File[] = [];
+    const invalidType: string[] = [];
+    const invalidSize: string[] = [];
+    for (const f of files) {
+      if (!ALLOWED_TYPES.includes(f.type)) {
+        invalidType.push(f.name);
+        continue;
+      }
+      if (f.size > MAX_FILE_SIZE) {
+        invalidSize.push(f.name);
+        continue;
+      }
+      valid.push(f);
+    }
+    if (invalidType.length > 0) {
+      setError(t("errors.uploadInvalidFileType"));
+      // Still add valid files from this batch
+    }
+    if (invalidSize.length > 0) {
+      setError(t("errors.uploadFileTooLarge"));
+    }
+    const combined = [...selectedFiles, ...valid].slice(0, MAX_IMAGES);
+    setSelectedFiles(combined);
+    const newPreviews = combined.map((f) => URL.createObjectURL(f));
+    filePreviews.forEach((url) => URL.revokeObjectURL(url));
+    setFilePreviews(newPreviews);
+    e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    const next = selectedFiles.filter((_, i) => i !== index);
+    const nextPreviews = filePreviews.filter((_, i) => i !== index);
+    URL.revokeObjectURL(filePreviews[index]);
+    setSelectedFiles(next);
+    setFilePreviews(nextPreviews);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!title.trim()) {
+      setError(t("errors.required"));
+      return;
+    }
+    if (!category) {
+      setError(t("errors.required"));
+      return;
+    }
+    if (selectedFiles.length === 0) {
+      setError(t("listing.atLeastOneImage"));
+      return;
+    }
+    if (showPrice) {
+      if (priceInput !== "" && !priceValid) {
+        setError(t("errors.priceMin"));
+        return;
+      }
+      const numPrice = priceForSubmit != null ? ensureNonNegative(priceForSubmit) : undefined;
+      if (numPrice != null && numPrice < 0) {
+        setError(t("errors.priceMin"));
+        return;
+      }
+      if (numPrice == null || numPrice <= 0) {
+        setError(t("errors.priceRequiredSellRent"));
+        return;
+      }
+    }
+
+    setLoading(true);
+    try {
+      const uploadRes = await listingApi.uploadListingImages(selectedFiles);
+      if (!uploadRes.success || !uploadRes.data?.urls?.length) {
+        const errMsg = uploadRes.error?.message ?? t("errors.somethingWentWrong");
+        setError(getApiErrorDisplayMessage(new Error(errMsg), t));
+        return;
+      }
+      const imageUrls = uploadRes.data.urls.map((u) => u.url);
+
+      const numPrice =
+        showPrice && priceInput !== ""
+          ? ensureNonNegative(priceForSubmit!)
+          : undefined;
+
+      const res = await listingApi.create({
+        title: title.trim(),
+        description: description.trim() || "",
+        categoryCode: category as ListingCategory,
+        type,
+        condition,
+        price: numPrice,
+        images: imageUrls,
+        latitude: 0,
+        longitude: 0,
+      });
+      if (!res.success) {
+        const errMsg = res.error?.message ?? t("errors.somethingWentWrong");
+        setError(getApiErrorDisplayMessage(new Error(errMsg), t));
+        return;
+      }
+      setTitle("");
+      setDescription("");
+      setCategory("");
+      setPriceInput("");
+      setSelectedFiles([]);
+      filePreviews.forEach((url) => URL.revokeObjectURL(url));
+      setFilePreviews([]);
+    } catch (err) {
+      setError(getApiErrorDisplayMessage(err, t));
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="px-4 py-6 sm:px-6">
@@ -21,30 +174,156 @@ export default function CreateListingPage() {
             <CardTitle>{t("listing.title")}</CardTitle>
             <CardDescription>Add a new item to share or sell.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>{t("listing.title")}</Label>
-              <Input placeholder="e.g. Engineering Maths textbook" />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("listing.description")}</Label>
-              <textarea
-                className="flex min-h-[100px] w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                placeholder={t("listing.description")}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("listing.category")}</Label>
-              <Input placeholder={t("listing.category")} />
-            </div>
-            <div className="space-y-2">
-              <Label>{t("listing.price")}</Label>
-              <Input type="number" placeholder="0" />
-            </div>
-            <Button className="w-full" size="lg">
-              {t("common.submit")}
-            </Button>
-          </CardContent>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              {error && (
+                <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+                  {error}
+                </p>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="listing-title">{t("listing.title")}</Label>
+                <Input
+                  id="listing-title"
+                  placeholder="e.g. Engineering Maths textbook"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="listing-description">{t("listing.description")}</Label>
+                <textarea
+                  id="listing-description"
+                  className="flex min-h-[100px] w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  placeholder={t("listing.description")}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="listing-category">{t("listing.category")}</Label>
+                <select
+                  id="listing-category"
+                  required
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as ListingCategory | "")}
+                  className="flex h-11 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="">{t("listing.category")}</option>
+                  {LISTING_CATEGORIES.map(({ value, labelKey }) => (
+                    <option key={value} value={value}>
+                      {t(labelKey)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t("listing.type")}</Label>
+                <select
+                  value={type}
+                  onChange={(e) => {
+                    const v = e.target.value as ListingType;
+                    setType(v);
+                    if (v === "free") setPriceInput("");
+                  }}
+                  className="flex h-11 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="sell">{t("listing.sell")}</option>
+                  <option value="rent">{t("listing.rent")}</option>
+                  <option value="free">{t("listing.free")}</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t("listing.condition")}</Label>
+                <select
+                  value={condition}
+                  onChange={(e) => setCondition(e.target.value as ListingCondition)}
+                  className="flex h-11 w-full rounded-xl border border-input bg-background px-4 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  <option value="new">{t("listing.new")}</option>
+                  <option value="like_new">{t("listing.likeNew")}</option>
+                  <option value="good">{t("listing.good")}</option>
+                  <option value="fair">{t("listing.fair")}</option>
+                  <option value="poor">{t("listing.poor")}</option>
+                </select>
+              </div>
+
+              {/* Images: required, 1–5 */}
+              <div className="space-y-2">
+                <Label>{t("listing.images")}</Label>
+                <p className="text-xs text-muted-foreground">{t("listing.atLeastOneImage")}</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPT_IMAGES}
+                  multiple
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <div className="flex flex-wrap gap-3">
+                  {filePreviews.map((url, i) => (
+                    <div
+                      key={url}
+                      className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg border border-input bg-muted"
+                    >
+                      <img src={url} alt="" className="h-full w-full object-cover" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute right-1 top-1 h-6 w-6"
+                        onClick={() => removeImage(i)}
+                        aria-label={t("listing.removeImage")}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  ))}
+                  {selectedFiles.length < MAX_IMAGES && (
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex h-24 w-24 shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-input bg-muted/50 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
+                      <ImagePlus className="h-6 w-6" />
+                      <span className="text-xs">{t("listing.selectImages")}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {showPrice && (
+                <div className="space-y-2">
+                  <Label htmlFor="listing-price">{t("listing.price")} (≥ 0)</Label>
+                  <Input
+                    id="listing-price"
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="0"
+                    value={priceInput}
+                    onChange={handlePriceChange}
+                    onBlur={() => {
+                      if (priceInput !== "" && !Number.isNaN(parseFloat(priceInput))) {
+                        setPriceInput(String(ensureNonNegative(priceInput)));
+                      }
+                    }}
+                    min={0}
+                    aria-invalid={!priceValid}
+                  />
+                  {!priceValid && priceInput !== "" && (
+                    <p className="text-sm text-destructive" role="alert">
+                      {t("errors.priceMin")}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <Button type="submit" className="w-full" size="lg" disabled={loading}>
+                {loading ? t("common.loading") : t("common.submit")}
+              </Button>
+            </CardContent>
+          </form>
         </Card>
       </motion.div>
     </div>
