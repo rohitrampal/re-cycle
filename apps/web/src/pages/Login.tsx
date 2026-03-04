@@ -7,37 +7,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authApi } from "@/lib/api/endpoints";
-import { useAuthStore } from "@/store/auth-store";
+import { useLoginMutation } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const login = useLoginMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
     try {
-      const res = await authApi.login({ email: email.trim(), password });
-      if (!res.success || !res.data) {
-        setError(res.error?.message ?? t("errors.somethingWentWrong"));
-        return;
-      }
-      const { user, accessToken, refreshToken } = res.data;
-      setAuth(user, accessToken, refreshToken);
+      await login.mutateAsync({ email: email.trim(), password });
       navigate("/", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errors.somethingWentWrong"));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -111,8 +100,8 @@ export default function LoginPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                {loading ? t("common.loading") : t("auth.login")}
+              <Button type="submit" className="w-full" size="lg" disabled={login.isPending}>
+                {login.isPending ? t("common.loading") : t("auth.login")}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
                 {t("auth.dontHaveAccount")}{" "}

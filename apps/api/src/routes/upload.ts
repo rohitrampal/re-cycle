@@ -51,6 +51,7 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
   /**
    * Upload multiple listing images
    * POST /api/upload/listings/multiple
+   * Uses req.files() iterator so multiple parts with the same field name are read correctly.
    */
   fastify.post(
     '/listings/multiple',
@@ -58,30 +59,33 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
       preHandler: [uploadRateLimit, authenticate],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
-      const files = await request.saveRequestFiles();
+      const fileBuffers: Array<{ buffer: Buffer; filename: string }> = [];
+      const parts = request.files();
+      let partIndex = 0;
+      for await (const part of parts) {
+        if (partIndex >= FILE_UPLOAD.MAX_FILES) {
+          throw new AppError(
+            ErrorCode.VALIDATION_ERROR,
+            `Maximum ${FILE_UPLOAD.MAX_FILES} files allowed`,
+            400
+          );
+        }
+        const buffer = await part.toBuffer();
+        const filename = part.filename || `image-${Date.now()}-${partIndex}.jpg`;
+        if (buffer.length === 0) {
+          throw new AppError(
+            ErrorCode.VALIDATION_ERROR,
+            `File "${filename}" is empty. Please upload valid image files (JPEG, PNG, or WebP).`,
+            400
+          );
+        }
+        fileBuffers.push({ buffer, filename });
+        partIndex += 1;
+      }
 
-      if (!files || files.length === 0) {
+      if (fileBuffers.length === 0) {
         throw new AppError(ErrorCode.VALIDATION_ERROR, 'No files provided', 400);
       }
-
-      if (files.length > FILE_UPLOAD.MAX_FILES) {
-        throw new AppError(
-          ErrorCode.VALIDATION_ERROR,
-          `Maximum ${FILE_UPLOAD.MAX_FILES} files allowed`,
-          400
-        );
-      }
-
-      // Read all files into buffers
-      const fileBuffers = await Promise.all(
-        files.map(async (file, index) => {
-          const buffer = await file.toBuffer();
-          return {
-            buffer,
-            filename: file.filename || `image-${Date.now()}-${index}.jpg`,
-          };
-        })
-      );
 
       // Upload to S3
       const results = await s3Service.uploadImages(fileBuffers, {

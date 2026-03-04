@@ -33,6 +33,8 @@
     "alreadyHaveAccount": "Already have an account?",
     "dontHaveAccount": "Don't have an account?",
     "createAccount": "Create Account",
+    "fillDetails": "Fill in your details.",
+    "namePlaceholder": "Your name",
     "showPassword": "Show password",
     "hidePassword": "Hide password"
   },
@@ -58,9 +60,19 @@
     "fair": "Fair",
     "poor": "Poor",
     "contactOwner": "Contact Owner",
+    "contactByEmail": "Send email",
+    "contactByPhone": "Call",
+    "yourListing": "Your listing",
     "views": "Views",
     "posted": "Posted",
     "location": "Location",
+    "useMyLocation": "Use my location",
+    "locationSet": "Location set",
+    "locationOptional": "Optional – helps others find your listing when they search by area.",
+    "locationConsent": "Optional. We use this to show your listing when others search by area. Approximate area only. You can skip or remove it later.",
+    "locationError": "Could not get location",
+    "locationUnsupported": "Geolocation is not supported",
+    "removeLocation": "Remove location",
     "categories": {
       "school_1_5": "School 1–5",
       "school_6_8": "School 6–8",
@@ -89,26 +101,65 @@
   "search": {
     "searchPlaceholder": "Search books, notes...",
     "filters": "Filters",
+    "allCategories": "All categories",
+    "allTypes": "All types",
     "category": "Category",
     "priceRange": "Price Range",
+    "priceMin": "Min",
+    "priceMax": "Max",
     "condition": "Condition",
     "radius": "Radius (km)",
+    "withinRadius": "Within {{km}} km",
+    "anyRadius": "Any distance",
+    "useMyLocation": "Use my location",
+    "locationConsentBrowse": "We use your location only to show listings within your chosen radius. You can skip.",
+    "locationRequired": "Set a location to filter by radius",
     "freeOnly": "Free Only",
     "noResults": "No results found",
-    "results": "Results"
+    "results": "Results",
+    "loadMore": "Load more"
   },
   "profile": {
     "myProfile": "My Profile",
     "myListings": "My Listings",
     "settings": "Settings",
     "editProfile": "Edit Profile",
-    "changeLanguage": "Change Language"
+    "changeLanguage": "Change Language",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell others a bit about yourself...",
+    "noListings": "You haven't posted any listings yet.",
+    "createFirstListing": "Create your first listing",
+    "manageAccount": "Manage your account and listings.",
+    "accountDetails": "Account details",
+    "email": "Email",
+    "phoneOptional": "Phone (optional)",
+    "listingCount": "{{count}} listing",
+    "listingsCount": "{{count}} listings"
+  },
+  "home": {
+    "howItWorks": "How it works",
+    "getStarted": "Get started",
+    "step1Title": "Create a listing",
+    "step1Description": "Add your books, notes, or study material. List items to sell, rent, or give away for free.",
+    "step2Title": "Browse & discover",
+    "step2Description": "Search by category, price, or location. Find what you need from students near you.",
+    "step3Title": "Connect & exchange",
+    "step3Description": "View listing details and contact the seller. Meet up or arrange delivery to complete the exchange."
   },
   "navigation": {
     "home": "Home",
     "browse": "Browse",
     "create": "Create",
     "profile": "Profile"
+  },
+  "footer": {
+    "rights": "All rights reserved.",
+    "madeWithLove": "Made with love",
+    "tagline": "Share books & notes with students near you. Help each other.",
+    "shareTitle": "{{appName}} – {{tagline}}",
+    "supportUs": "Support us",
+    "shareWithOthers": "Share with others",
+    "buyMeACoffee": "Buy me a coffee"
   },
   "errors": {
     "required": "This field is required",
@@ -122,6 +173,7 @@
     "uploadInvalidFileType": "Please use only JPEG, PNG, or WebP images.",
     "uploadFileEmpty": "File is empty or invalid. Please choose a valid image file.",
     "uploadFileTooLarge": "File is too large. Maximum size is 10 MB.",
+    "uploadFileEmpty": "One or more files are empty or invalid. Please select valid image files (JPEG, PNG, or WebP).",
     "uploadMaxFiles": "Maximum 5 images allowed.",
     "uploadNoFile": "No image selected. Please add at least one image."
   }

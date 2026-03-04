@@ -7,20 +7,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authApi } from "@/lib/api/endpoints";
-import { useAuthStore } from "@/store/auth-store";
+import { useRegisterMutation } from "@/hooks/use-auth";
 import { validatePhone, normalizePhone } from "@/lib/validation";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const register = useRegisterMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,25 +33,16 @@ export default function RegisterPage() {
       }
     }
 
-    setLoading(true);
     try {
-      const res = await authApi.register({
+      await register.mutateAsync({
         name: name.trim(),
         email: email.trim(),
         password,
         phone: phone.trim() ? normalizePhone(phone) || undefined : undefined,
       });
-      if (!res.success || !res.data) {
-        setError(res.error?.message ?? t("errors.somethingWentWrong"));
-        return;
-      }
-      const { user, accessToken, refreshToken } = res.data;
-      setAuth(user, accessToken, refreshToken);
       navigate("/", { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : t("errors.somethingWentWrong"));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -68,7 +57,7 @@ export default function RegisterPage() {
         <Card className="border-2 shadow-xl">
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl">{t("auth.register")}</CardTitle>
-            <CardDescription>{t("auth.createAccount")} Fill in your details.</CardDescription>
+            <CardDescription>{t("auth.createAccount")} {t("auth.fillDetails")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
@@ -82,7 +71,7 @@ export default function RegisterPage() {
                 <Input
                   id="name"
                   type="text"
-                  placeholder="Your name"
+                  placeholder={t("auth.namePlaceholder")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -149,8 +138,8 @@ export default function RegisterPage() {
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                {loading ? t("common.loading") : t("auth.register")}
+              <Button type="submit" className="w-full" size="lg" disabled={register.isPending}>
+                {register.isPending ? t("common.loading") : t("auth.register")}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
                 {t("auth.alreadyHaveAccount")}{" "}

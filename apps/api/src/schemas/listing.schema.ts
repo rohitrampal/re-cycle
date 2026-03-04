@@ -42,11 +42,7 @@ export const createListingSchema = z.object({
       .number()
       .positive('Price must be positive')
       .max(1000000, 'Price too high')
-      .optional()
-      .refine((val) => {
-        // Price is required if type is 'sell' or 'rent'
-        return val !== undefined;
-      }, 'Price is required for sell or rent listings'),
+      .optional(),
     images: z
       .array(z.string().url('Invalid image URL'))
       .min(1, 'At least one image is required')
@@ -54,13 +50,20 @@ export const createListingSchema = z.object({
     latitude: z
       .number()
       .min(-90, 'Invalid latitude')
-      .max(90, 'Invalid latitude'),
+      .max(90, 'Invalid latitude')
+      .optional(),
     longitude: z
       .number()
       .min(-180, 'Invalid longitude')
-      .max(180, 'Invalid longitude'),
+      .max(180, 'Invalid longitude')
+      .optional(),
     institutionId: z.string().uuid('Invalid institution ID').optional(),
   }).refine((data) => {
+    if (data.latitude != null && data.longitude == null) return false;
+    if (data.latitude == null && data.longitude != null) return false;
+    return true;
+  }, { message: 'Provide both latitude and longitude, or omit both', path: ['latitude'] })
+  .refine((data) => {
     // Price validation based on type
     if (data.type === 'sell' || data.type === 'rent') {
       return data.price !== undefined && data.price > 0;
@@ -102,6 +105,7 @@ export const updateListingSchema = z.object({
       .min(-180, 'Invalid longitude')
       .max(180, 'Invalid longitude')
       .optional(),
+    clearLocation: z.boolean().optional(),
     isActive: z.boolean().optional(),
   }),
 });

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { ArrowRight, BookOpen, Search, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, MessageCircle, Search, Sparkles, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -73,12 +73,16 @@ export default function HomePage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
           >
-            How it works
+            {t("home.howItWorks")}
           </motion.h2>
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            {[1, 2, 3].map((step, i) => (
+            {[
+              { icon: Upload, titleKey: "home.step1Title", descKey: "home.step1Description" },
+              { icon: Search, titleKey: "home.step2Title", descKey: "home.step2Description" },
+              { icon: MessageCircle, titleKey: "home.step3Title", descKey: "home.step3Description" },
+            ].map(({ icon: Icon, titleKey, descKey }, i) => (
               <motion.div
-                key={step}
+                key={titleKey}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -86,9 +90,11 @@ export default function HomePage() {
               >
                 <Card className="h-full border-2 transition-shadow hover:shadow-lg">
                   <CardHeader>
-                    <span className="text-3xl font-bold text-primary/60">0{step}</span>
-                    <CardTitle>Step {step}</CardTitle>
-                    <CardDescription>Description for step {step}.</CardDescription>
+                    <span className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <Icon className="h-6 w-6" />
+                    </span>
+                    <CardTitle>{t(titleKey)}</CardTitle>
+                    <CardDescription>{t(descKey)}</CardDescription>
                   </CardHeader>
                 </Card>
               </motion.div>
@@ -102,7 +108,7 @@ export default function HomePage() {
           >
             <Button variant="outline" size="lg" asChild className="gap-2">
               <Link to="/browse">
-                Get started
+                {t("home.getStarted")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>

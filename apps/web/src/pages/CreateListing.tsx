@@ -1,7 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, X, MapPin } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +9,12 @@ import { Label } from "@/components/ui/label";
 import { LISTING_CATEGORIES } from "@/lib/listing-categories";
 import { ensureNonNegative, isNonNegative } from "@/lib/validation";
 import type { ListingCategory, ListingType, ListingCondition } from "@recycle/shared";
-import { listingApi } from "@/lib/api/endpoints";
+import { useUploadListingImagesMutation, useCreateListingMutation } from "@/hooks/use-listings";
 import { getApiErrorDisplayMessage } from "@/lib/api/errors";
 
 const MAX_IMAGES = 5;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB, match backend
+const MIN_FILE_SIZE = 100; // Match backend: reject empty/truncated files
 const ACCEPT_IMAGES = "image/jpeg,image/png,image/webp";
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -28,8 +29,34 @@ export default function CreateListingPage() {
   const [priceInput, setPriceInput] = useState("");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [filePreviews, setFilePreviews] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [listingLocation, setListingLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const requestLocation = useCallback(() => {
+    setLocationError(null);
+    if (!navigator.geolocation) {
+      setLocationError(t("listing.locationUnsupported"));
+      return;
+    }
+    setLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setListingLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+        setLocationLoading(false);
+      },
+      () => {
+        setLocationError(t("listing.locationError"));
+        setLocationLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
+    );
+  }, [t]);
+
+  const uploadImages = useUploadListingImagesMutation();
+  const createListing = useCreateListingMutation();
+  const loading = uploadImages.isPending || createListing.isPending;
 
   const priceNum = priceInput === "" ? undefined : parseFloat(priceInput);
   const priceValid = priceInput === "" || (Number.isNaN(priceNum!) ? false : isNonNegative(priceNum!));
@@ -50,9 +77,14 @@ export default function CreateListingPage() {
     const valid: File[] = [];
     const invalidType: string[] = [];
     const invalidSize: string[] = [];
+    const emptyFiles: string[] = [];
     for (const f of files) {
       if (!ALLOWED_TYPES.includes(f.type)) {
         invalidType.push(f.name);
+        continue;
+      }
+      if (f.size < MIN_FILE_SIZE) {
+        emptyFiles.push(f.name);
         continue;
       }
       if (f.size > MAX_FILE_SIZE) {
@@ -64,6 +96,10 @@ export default function CreateListingPage() {
     if (invalidType.length > 0) {
       setError(t("errors.uploadInvalidFileType"));
       // Still add valid files from this batch
+    }
+    if (emptyFiles.length > 0) {
+      setError(t("errors.uploadFileEmpty"));
+      // Don't add empty files
     }
     if (invalidSize.length > 0) {
       setError(t("errors.uploadFileTooLarge"));
@@ -116,22 +152,22 @@ export default function CreateListingPage() {
       }
     }
 
-    setLoading(true);
+    const filesToUpload = selectedFiles.filter((f) => f.size >= MIN_FILE_SIZE);
+    if (filesToUpload.length === 0) {
+      setError(t("errors.uploadFileEmpty"));
+      return;
+    }
+
     try {
-      const uploadRes = await listingApi.uploadListingImages(selectedFiles);
-      if (!uploadRes.success || !uploadRes.data?.urls?.length) {
-        const errMsg = uploadRes.error?.message ?? t("errors.somethingWentWrong");
-        setError(getApiErrorDisplayMessage(new Error(errMsg), t));
-        return;
-      }
-      const imageUrls = uploadRes.data.urls.map((u) => u.url);
+      const uploadResult = await uploadImages.mutateAsync(filesToUpload);
+      const imageUrls = uploadResult.urls.map((u) => u.url);
 
       const numPrice =
         showPrice && priceInput !== ""
           ? ensureNonNegative(priceForSubmit!)
           : undefined;
 
-      const res = await listingApi.create({
+      const createPayload: Parameters<typeof createListing.mutateAsync>[0] = {
         title: title.trim(),
         description: description.trim() || "",
         categoryCode: category as ListingCategory,
@@ -139,25 +175,25 @@ export default function CreateListingPage() {
         condition,
         price: numPrice,
         images: imageUrls,
-        latitude: 0,
-        longitude: 0,
-      });
-      if (!res.success) {
-        const errMsg = res.error?.message ?? t("errors.somethingWentWrong");
-        setError(getApiErrorDisplayMessage(new Error(errMsg), t));
-        return;
+      };
+      if (listingLocation) {
+        createPayload.latitude = listingLocation.latitude;
+        createPayload.longitude = listingLocation.longitude;
       }
+
+      await createListing.mutateAsync(createPayload);
+
       setTitle("");
       setDescription("");
       setCategory("");
       setPriceInput("");
       setSelectedFiles([]);
+      setListingLocation(null);
+      setLocationError(null);
       filePreviews.forEach((url) => URL.revokeObjectURL(url));
       setFilePreviews([]);
     } catch (err) {
       setError(getApiErrorDisplayMessage(err, t));
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -291,6 +327,29 @@ export default function CreateListingPage() {
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* Optional location – consent-based, reduced precision on server */}
+              <div className="space-y-2">
+                <Label>{t("listing.location")}</Label>
+                <p className="text-xs text-muted-foreground">{t("listing.locationConsent")}</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={requestLocation}
+                  disabled={locationLoading}
+                >
+                  <MapPin className="h-4 w-4 shrink-0" />
+                  {locationLoading
+                    ? t("common.loading")
+                    : listingLocation
+                      ? t("listing.locationSet")
+                      : t("listing.useMyLocation")}
+                </Button>
+                {locationError && (
+                  <p className="text-sm text-destructive" role="alert">{locationError}</p>
+                )}
               </div>
 
               {showPrice && (

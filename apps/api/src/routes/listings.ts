@@ -17,6 +17,7 @@ import { checkRouteRateLimit } from '../utils/route-rate-limit';
 import { cacheGet, cacheSet, cacheDel, cacheKey } from '../services/cache.service';
 import { CACHE_TTL } from '../constants';
 import { notifyMatchingSearchAlerts } from '../services/notification.service';
+import { roundForResponse, roundForStorage } from '../utils/location';
 
 export default async function listingRoutes(fastify: FastifyInstance) {
   // Create listing
@@ -35,10 +36,14 @@ export default async function listingRoutes(fastify: FastifyInstance) {
         condition?: string;
         price?: number;
         images: string[];
-        latitude: number;
-        longitude: number;
+        latitude?: number;
+        longitude?: number;
         institutionId?: string;
       };
+      const location =
+        body.latitude != null && body.longitude != null
+          ? { latitude: body.latitude, longitude: body.longitude }
+          : null;
       const created = await listingService.create(userId, {
         title: body.title,
         description: body.description ?? '',
@@ -47,24 +52,25 @@ export default async function listingRoutes(fastify: FastifyInstance) {
         condition: body.condition ?? 'good',
         price: body.price,
         images: body.images,
-        location: { latitude: body.latitude, longitude: body.longitude },
+        location,
         institutionId: body.institutionId,
       });
-      // Notify users with matching search alerts (fire-and-forget)
-      setImmediate(() => {
-        notifyMatchingSearchAlerts(
-          {
-            id: created.id,
-            user_id: created.userId,
-            title: created.title,
-            category_code: created.category,
-            type: created.type,
-            location: null,
-          },
-          body.longitude,
-          body.latitude
-        ).catch((err) => fastify.log.warn({ err, listingId: created.id }, 'Notification match failed'));
-      });
+      if (location) {
+        setImmediate(() => {
+          notifyMatchingSearchAlerts(
+            {
+              id: created.id,
+              user_id: created.userId,
+              title: created.title,
+              category_code: created.category,
+              type: created.type,
+              location: null,
+            },
+            location.longitude,
+            location.latitude
+          ).catch((err) => fastify.log.warn({ err, listingId: created.id }, 'Notification match failed'));
+        });
+      }
       return {
         success: true,
         data: {
@@ -77,7 +83,7 @@ export default async function listingRoutes(fastify: FastifyInstance) {
           condition: created.condition,
           price: created.price,
           images: created.images,
-          location: created.location,
+          location: roundForResponse(created.location),
           institutionId: created.institutionId,
           isActive: created.isActive,
           views: created.views,
@@ -185,6 +191,7 @@ export default async function listingRoutes(fastify: FastifyInstance) {
       if (includeUser) {
         const result = await db.query(
           `SELECT l.id, l.user_id, l.title, l.description, l.category_code, l.type, l.condition, l.price, l.images, l.institution_id, l.is_active, l.views, l.created_at, l.updated_at,
+                  ST_Y(l.location::geometry) AS location_lat, ST_X(l.location::geometry) AS location_lng,
                   u.id as u_id, u.name as u_name, u.email as u_email, u.phone as u_phone, u.verified as u_verified
            FROM listings l
            INNER JOIN users u ON u.id = l.user_id
@@ -210,6 +217,11 @@ export default async function listingRoutes(fastify: FastifyInstance) {
           views: row.views,
           created_at: row.created_at,
           updated_at: row.updated_at,
+          location: roundForResponse(
+            row.location_lat != null && row.location_lng != null
+              ? { latitude: Number(row.location_lat), longitude: Number(row.location_lng) }
+              : null
+          ),
           user: {
             id: row.u_id,
             name: row.u_name,
@@ -222,14 +234,25 @@ export default async function listingRoutes(fastify: FastifyInstance) {
       }
 
       const result = await db.query(
-        `SELECT id, user_id, title, description, category_code, type, condition, price, images, institution_id, is_active, views, created_at, updated_at
+        `SELECT id, user_id, title, description, category_code, type, condition, price, images, institution_id, is_active, views, created_at, updated_at,
+                ST_Y(location::geometry) AS location_lat, ST_X(location::geometry) AS location_lng
          FROM listings WHERE id = $1 AND is_active = TRUE`,
         [id]
       );
       if (result.rows.length === 0) {
         throw new AppError(ErrorCode.NOT_FOUND, 'Listing not found', 404);
       }
-      const listing = result.rows[0];
+      const row = result.rows[0];
+      const location =
+        row.location_lat != null && row.location_lng != null
+          ? { latitude: Number(row.location_lat), longitude: Number(row.location_lng) }
+          : null;
+      const listing = {
+        ...row,
+        location: roundForResponse(location),
+      };
+      delete (listing as Record<string, unknown>).location_lat;
+      delete (listing as Record<string, unknown>).location_lng;
       await cacheSet(cacheKey('listing', id), listing, CACHE_TTL.MEDIUM);
       return { success: true, data: listing };
     }
@@ -456,6 +479,7 @@ export default async function listingRoutes(fastify: FastifyInstance) {
         images: string[];
         latitude: number;
         longitude: number;
+        clearLocation?: boolean;
         isActive: boolean;
       }>;
       const updateFields: string[] = [];
@@ -489,9 +513,12 @@ export default async function listingRoutes(fastify: FastifyInstance) {
         updateFields.push(`images = $${paramIndex++}`);
         values.push(body.images);
       }
-      if (body.latitude !== undefined && body.longitude !== undefined) {
+      if (body.clearLocation === true) {
+        updateFields.push('location = NULL');
+      } else if (body.latitude !== undefined && body.longitude !== undefined) {
+        const rounded = roundForStorage(body.latitude, body.longitude);
         updateFields.push(`location = ST_SetSRID(ST_MakePoint($${paramIndex}, $${paramIndex + 1}), 4326)`);
-        values.push(body.longitude, body.latitude);
+        values.push(rounded.longitude, rounded.latitude);
         paramIndex += 2;
       }
       if (body.isActive !== undefined) {
@@ -505,14 +532,37 @@ export default async function listingRoutes(fastify: FastifyInstance) {
       values.push(id);
       const result = await db.query(
         `UPDATE listings SET ${updateFields.join(', ')} WHERE id = $${paramIndex}
-         RETURNING id, user_id, title, description, category_code, type, condition, price, images, institution_id, is_active, views, created_at, updated_at`,
+         RETURNING id, user_id, title, description, category_code, type, condition, price, images, institution_id, is_active, views, created_at, updated_at,
+           ST_Y(location::geometry) AS location_lat, ST_X(location::geometry) AS location_lng`,
         values
       );
       if (result.rows.length === 0) {
         throw new AppError(ErrorCode.NOT_FOUND, 'Listing not found', 404);
       }
       await cacheDel(cacheKey('listing', id));
-      return { success: true, data: result.rows[0] };
+      const row = result.rows[0];
+      const location =
+        row.location_lat != null && row.location_lng != null
+          ? { latitude: Number(row.location_lat), longitude: Number(row.location_lng) }
+          : null;
+      const listing = {
+        id: row.id,
+        userId: row.user_id,
+        title: row.title,
+        description: row.description,
+        category: row.category_code,
+        type: row.type,
+        condition: row.condition,
+        price: row.price,
+        images: row.images,
+        institutionId: row.institution_id,
+        isActive: row.is_active,
+        views: row.views,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        location: roundForResponse(location),
+      };
+      return { success: true, data: listing };
     }
   );
 
