@@ -43,17 +43,17 @@ export default function BrowsePage() {
   const requestLocation = useCallback(() => {
     setLocationError(null);
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported");
+      setLocationError(t("listing.locationUnsupported"));
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
       },
-      () => setLocationError("Could not get location"),
+      () => setLocationError(t("listing.locationError")),
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
     );
-  }, []);
+  }, [t]);
 
   const searchParams: ListingSearchParams = useMemo(() => {
     const min = minPrice.trim() ? parseFloat(minPrice) : undefined;
@@ -178,7 +178,7 @@ export default function BrowsePage() {
                         type="number"
                         min={0}
                         step={1}
-                        placeholder="0"
+                        placeholder={t("search.pricePlaceholderFilter")}
                         value={minPrice}
                         onChange={(e) => setMinPrice(e.target.value)}
                       />
@@ -189,7 +189,7 @@ export default function BrowsePage() {
                         type="number"
                         min={0}
                         step={1}
-                        placeholder="—"
+                        placeholder={t("search.noValue")}
                         value={maxPrice}
                         onChange={(e) => setMaxPrice(e.target.value)}
                       />

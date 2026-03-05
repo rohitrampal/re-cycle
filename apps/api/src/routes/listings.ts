@@ -15,6 +15,7 @@ import { AppError, ErrorCode } from '../utils/errors';
 import { RATE_LIMITS } from '../constants';
 import { checkRouteRateLimit } from '../utils/route-rate-limit';
 import { cacheGet, cacheSet, cacheDel, cacheKey } from '../services/cache.service';
+import { s3Service } from '../services/s3.service';
 import { CACHE_TTL } from '../constants';
 import { notifyMatchingSearchAlerts } from '../services/notification.service';
 import { roundForResponse, roundForStorage } from '../utils/location';
@@ -586,6 +587,26 @@ export default async function listingRoutes(fastify: FastifyInstance) {
     },
     async (request: FastifyRequest) => {
       const { id } = request.params as { id: string };
+
+      // Load listing images so we can delete them from S3 (avoid orphaned blobs)
+      const listResult = await db.query<{ images: string[] | null }>(
+        'SELECT images FROM listings WHERE id = $1',
+        [id]
+      );
+      const images: string[] = listResult.rows[0]?.images ?? [];
+      const keysToDelete: string[] = [];
+      for (const url of images) {
+        if (!url || typeof url !== 'string') continue;
+        const key = s3Service.extractKeyFromUrl(url);
+        if (key) {
+          keysToDelete.push(key);
+          keysToDelete.push(s3Service.getThumbnailKey(key));
+        }
+      }
+      if (keysToDelete.length > 0) {
+        await s3Service.deleteFiles(keysToDelete);
+      }
+
       await db.query('DELETE FROM listings WHERE id = $1', [id]);
       await cacheDel(cacheKey('listing', id));
       return { success: true };

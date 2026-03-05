@@ -54,8 +54,9 @@ class S3Service {
 
     this.bucket = config.s3.bucket;
     this.region = config.s3.region;
-    // Use CDN URL if provided, otherwise use S3 direct URL
-    this.baseUrl = config.s3.cdnUrl || `https://${this.bucket}.s3.${this.region}.amazonaws.com`;
+    // Use CDN URL if provided, otherwise use S3 direct URL. Strip trailing slash to avoid double slashes in built URLs.
+    const rawBase = config.s3.cdnUrl || `https://${this.bucket}.s3.${this.region}.amazonaws.com`;
+    this.baseUrl = rawBase.replace(/\/+$/, '') || rawBase;
   }
 
   /**
@@ -245,16 +246,27 @@ class S3Service {
     try {
       const urlObj = new URL(url);
       const pathname = urlObj.pathname;
-      
+
       if (!pathname || pathname === '/') {
         return null;
       }
-      
+
       // Remove leading slash
       return pathname.substring(1);
     } catch {
       return null;
     }
+  }
+
+  /**
+   * Get thumbnail key from main image key (listings/123-foo.jpg -> listings/thumbnails/123-foo.jpg)
+   */
+  getThumbnailKey(mainKey: string): string {
+    const parts = mainKey.split('/');
+    if (parts.length < 2) return mainKey;
+    const filename = parts.pop()!;
+    parts.push('thumbnails', filename);
+    return parts.join('/');
   }
 
   /**

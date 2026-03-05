@@ -18,7 +18,11 @@
     "submit": "सबमिट करा",
     "next": "पुढे",
     "previous": "मागे",
-    "back": "मागे"
+    "back": "मागे",
+    "openMenu": "मेनू उघडा",
+    "themeLight": "लाइट",
+    "themeDark": "डार्क",
+    "themeSystem": "सिस्टम"
   },
   "auth": {
     "login": "लॉगिन",
@@ -35,6 +39,9 @@
     "createAccount": "खाते तयार करा",
     "fillDetails": "तुमची तपशील भरा.",
     "namePlaceholder": "तुमचे नाव",
+    "emailPlaceholder": "you@example.com",
+    "phonePlaceholder": "9876543210",
+    "phonePlaceholderShort": "+91...",
     "showPassword": "पासवर्ड दाखवा",
     "hidePassword": "पासवर्ड लपवा"
   },
@@ -42,15 +49,19 @@
     "create": "यादी तयार करा",
     "edit": "यादी संपादित करा",
     "title": "शीर्षक",
+    "titlePlaceholder": "उदा. इंजिनिअरिंग मॅथ्स पाठ्यपुस्तक",
     "description": "वर्णन",
     "category": "श्रेणी",
     "type": "प्रकार",
     "condition": "स्थिती",
     "price": "किंमत",
+    "pricePlaceholder": "0",
     "images": "प्रतिमा",
     "selectImages": "प्रतिमा निवडा",
     "atLeastOneImage": "किमान एक प्रतिमा आवश्यक (कमाल 5)",
     "removeImage": "काढा",
+    "imagePrevious": "मागील प्रतिमा",
+    "imageNext": "पुढील प्रतिमा",
     "sell": "विक्री",
     "rent": "भाडे",
     "free": "मोफत",
@@ -63,6 +74,7 @@
     "contactByEmail": "ईमेल पाठवा",
     "contactByPhone": "कॉल करा",
     "yourListing": "तुमची यादी",
+    "saveChanges": "बदल जतन करा",
     "views": "दृश्ये",
     "posted": "पोस्ट केले",
     "location": "स्थान",
@@ -107,6 +119,8 @@
     "priceRange": "किंमत श्रेणी",
     "priceMin": "किमान",
     "priceMax": "कमाल",
+    "pricePlaceholderFilter": "0",
+    "noValue": "—",
     "condition": "स्थिती",
     "radius": "त्रिज्या (किमी)",
     "withinRadius": "{{km}} किमी आत",
@@ -134,7 +148,9 @@
     "email": "ईमेल",
     "phoneOptional": "फोन (पर्यायी)",
     "listingCount": "{{count}} यादी",
-    "listingsCount": "{{count}} याद्या"
+    "listingsCount": "{{count}} याद्या",
+    "deleteListing": "यादी हटवा",
+    "deleteListingConfirm": "ही यादी हटवायची? हे पूर्ववत करता येणार नाही."
   },
   "home": {
     "howItWorks": "हे कसे काम करते",
@@ -159,7 +175,10 @@
     "shareTitle": "{{appName}} – {{tagline}}",
     "supportUs": "आम्हाला सपोर्ट करा",
     "shareWithOthers": "इतरांना शेअर करा",
-    "buyMeACoffee": "मला एक कॉफी द्या"
+    "buyMeACoffee": "मला एक कॉफी द्या",
+    "copied": "कॉपी झाले!",
+    "clickToCopy": "कॉपी करण्यासाठी क्लिक करा",
+    "supportPhone": "सहाय्य / UPI"
   },
   "errors": {
     "required": "हे फील्ड आवश्यक आहे",
@@ -167,6 +186,7 @@
     "invalidPhone": "अवैध फोन नंबर",
     "passwordTooShort": "पासवर्ड किमान 8 वर्णांचा असावा",
     "somethingWentWrong": "काहीतरी चुकीचे झाले",
+    "forbidden": "तुम्हाला हे करण्याची परवानगी नाही.",
     "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा.",
     "priceMin": "किंमत 0 पेक्षा कमी असू शकत नाही.",
     "priceRequiredSellRent": "विकण्यासाठी किंवा भाड्याने देण्यासाठी किंमत आवश्यक आहे आणि 0 पेक्षा जास्त असणे आवश्यक आहे.",

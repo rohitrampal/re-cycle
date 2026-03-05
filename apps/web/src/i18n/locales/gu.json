@@ -18,7 +18,11 @@
     "submit": "સબમિટ કરો",
     "next": "આગળ",
     "previous": "પહેલાં",
-    "back": "પાછળ"
+    "back": "પાછળ",
+    "openMenu": "મેનૂ ખોલો",
+    "themeLight": "લાઇટ",
+    "themeDark": "ડાર્ક",
+    "themeSystem": "સિસ્ટમ"
   },
   "auth": {
     "login": "લૉગિન",
@@ -35,6 +39,9 @@
     "createAccount": "એકાઉન્ટ બનાવો",
     "fillDetails": "તમારી વિગતો ભરો.",
     "namePlaceholder": "તમારું નામ",
+    "emailPlaceholder": "you@example.com",
+    "phonePlaceholder": "9876543210",
+    "phonePlaceholderShort": "+91...",
     "showPassword": "પાસવર્ડ બતાવો",
     "hidePassword": "પાસવર્ડ છુપાવો"
   },
@@ -42,15 +49,19 @@
     "create": "લિસ્ટિંગ બનાવો",
     "edit": "લિસ્ટિંગ સંપાદિત કરો",
     "title": "શીર્ષક",
+    "titlePlaceholder": "જેમ કે ઇજનેરી મેથ્સ પાઠ્યપુસ્તક",
     "description": "વર્ણન",
     "category": "શ્રેણી",
     "type": "પ્રકાર",
     "condition": "સ્થિતિ",
     "price": "કિંમત",
+    "pricePlaceholder": "0",
     "images": "છબીઓ",
     "selectImages": "છબીઓ પસંદ કરો",
     "atLeastOneImage": "ઓછામાં ઓછી એક છબી જરૂરી (મહત્તમ 5)",
     "removeImage": "દૂર કરો",
+    "imagePrevious": "અગાઉની છબી",
+    "imageNext": "આગળની છબી",
     "sell": "વેચો",
     "rent": "ભાડે આપો",
     "free": "મફત",
@@ -63,6 +74,7 @@
     "contactByEmail": "ઈમેલ મોકલો",
     "contactByPhone": "કૉલ કરો",
     "yourListing": "તમારી યાદી",
+    "saveChanges": "ફેરફારો સાચવો",
     "views": "દૃશ્યો",
     "posted": "પોસ્ટ કર્યું",
     "location": "સ્થાન",
@@ -107,6 +119,8 @@
     "priceRange": "કિંમત શ્રેણી",
     "priceMin": "ઓછું",
     "priceMax": "વધુ",
+    "pricePlaceholderFilter": "0",
+    "noValue": "—",
     "condition": "સ્થિતિ",
     "radius": "ત્રિજ્યા (કિમી)",
     "withinRadius": "{{km}} કિમી ની અંદર",
@@ -134,7 +148,9 @@
     "email": "ઈમેલ",
     "phoneOptional": "ફોન (વૈકલ્પિક)",
     "listingCount": "{{count}} યાદી",
-    "listingsCount": "{{count}} યાદીઓ"
+    "listingsCount": "{{count}} યાદીઓ",
+    "deleteListing": "યાદી કાઢી નાખો",
+    "deleteListingConfirm": "આ યાદી કાઢી નાખો? આ પૂર્વવત કરી શકાશે નહીં."
   },
   "home": {
     "howItWorks": "આ કેવી રીતે કામ કરે છે",
@@ -159,7 +175,10 @@
     "shareTitle": "{{appName}} – {{tagline}}",
     "supportUs": "અમને સપોર્ટ કરો",
     "shareWithOthers": "બીજાને શેર કરો",
-    "buyMeACoffee": "મને એક કોફી ભેટ આપો"
+    "buyMeACoffee": "મને એક કોફી ભેટ આપો",
+    "copied": "કૉપી થયું!",
+    "clickToCopy": "કૉપી કરવા ક્લિક કરો",
+    "supportPhone": "આધાર / UPI"
   },
   "errors": {
     "required": "આ ફીલ્ડ જરૂરી છે",
@@ -167,6 +186,7 @@
     "invalidPhone": "અમાન્ય ફોન નંબર",
     "passwordTooShort": "પાસવર્ડ ઓછામાં ઓછા 8 અક્ષરનો હોવો જોઈએ",
     "somethingWentWrong": "કંઈક ખોટું થયું",
+    "forbidden": "તમને આ કરવાની પરવાનગી નથી.",
     "networkError": "નેટવર્ક ભૂલ. કૃપા કરીને તમારું કનેક્શન તપાસો.",
     "priceMin": "કિંમત 0 કરતા ઓછી ન હોઈ શકે.",
     "priceRequiredSellRent": "વેચાણ અથવા ભાડા માટે કિંમત જરૂરી છે અને 0 કરતા વધારે હોવી જોઈએ.",

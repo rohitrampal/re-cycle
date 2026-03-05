@@ -1,12 +1,28 @@
+import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Heart, Share2, Coffee } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Share2, Coffee, Phone, Copy } from "lucide-react";
 
-const SUPPORT_UPI_LINK = import.meta.env.VITE_SUPPORT_UPI_LINK ?? "";
+// UPI link: commented out – show phone on hover/click instead 
+// const SUPPORT_UPI_LINK = import.meta.env.VITE_SUPPORT_UPI_LINK ?? "";
+const UPI_PHONE_NUMBER = import.meta.env.VITE_UPI_PHONE_NUMBER ?? "";
 
 export function Footer() {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
+  const [copied, setCopied] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [showPhonePopover, setShowPhonePopover] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Keep popover visible briefly on click (so user sees number + copied state)
+  useEffect(() => {
+    if (!showPhonePopover) return;
+    const t = setTimeout(() => setShowPhonePopover(false), 2500);
+    return () => clearTimeout(t);
+  }, [showPhonePopover]);
 
   const handleShare = async () => {
     const url = window.location.origin;
@@ -33,6 +49,13 @@ export function Footer() {
     navigator.clipboard.writeText(text).then(() => {
       // Optional: could add a small toast here
     });
+  };
+
+  const handleCopyPhone = () => {
+    copyToClipboard(UPI_PHONE_NUMBER);
+    setCopied(true);
+    setShowPhonePopover(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -66,6 +89,7 @@ export function Footer() {
             <Share2 className="h-3.5 w-3.5" />
             {t("footer.shareWithOthers")}
           </button>
+          {/* UPI link: commented out – use phone number on hover/click instead
           {SUPPORT_UPI_LINK && (
             <>
               <span className="text-muted-foreground" aria-hidden>·</span>
@@ -78,6 +102,96 @@ export function Footer() {
                 <Coffee className="h-3.5 w-3.5" />
                 {t("footer.buyMeACoffee")}
               </a>
+            </>
+          )}
+          */}
+          {UPI_PHONE_NUMBER && (
+            <>
+              <span className="text-muted-foreground" aria-hidden>·</span>
+              <div className="relative inline-block">
+                <AnimatePresence>
+                  {(isHovered || showPhonePopover) && (
+                    <motion.div
+                      ref={popoverRef}
+                      className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
+                      initial={{ opacity: 0, y: 6, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.95 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    >
+                      <div className="rounded-xl border border-amber-200/80 bg-amber-50/95 px-4 py-3 shadow-lg backdrop-blur-sm dark:border-amber-700/60 dark:bg-amber-950/95">
+                        <div className="flex items-center gap-2 text-amber-900 dark:text-amber-100">
+                          <motion.span
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500, damping: 25, delay: 0.05 }}
+                          >
+                            <Phone className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                          </motion.span>
+                          <span className="text-xs font-medium uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                            {t("footer.supportPhone")}
+                          </span>
+                        </div>
+                        <motion.p
+                          className="mt-1.5 font-mono text-lg font-semibold tracking-wide text-amber-900 dark:text-amber-100"
+                          initial={{ opacity: 0, x: -4 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.08 }}
+                        >
+                          {UPI_PHONE_NUMBER}
+                        </motion.p>
+                        <motion.p
+                          className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.12 }}
+                        >
+                          <Copy className="h-3 w-3" />
+                          {copied ? t("footer.copied") : t("footer.clickToCopy")}
+                        </motion.p>
+                        {/* arrow pointing down to button */}
+                        <div
+                          className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-amber-50 dark:border-t-amber-950/95"
+                          aria-hidden
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <motion.button
+                  ref={buttonRef}
+                  type="button"
+                  onClick={handleCopyPhone}
+                  onHoverStart={() => setIsHovered(true)}
+                  onHoverEnd={() => setIsHovered(false)}
+                  className="relative inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-800 shadow-sm dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200 dark:hover:bg-amber-900/50"
+                  whileHover={{
+                    scale: 1.06,
+                    boxShadow: "0 4px 20px rgba(217, 119, 6, 0.35)",
+                    transition: { duration: 0.2 },
+                  }}
+                  whileTap={{
+                    scale: 0.96,
+                    transition: { type: "spring", stiffness: 400, damping: 17 },
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <motion.span
+                    className="inline-flex origin-center"
+                    animate={
+                      copied
+                        ? { rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }
+                        : isHovered || showPhonePopover
+                          ? { scale: 1.15 }
+                          : { scale: 1 }
+                    }
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Coffee className="h-3.5 w-3.5" />
+                  </motion.span>
+                  {t("footer.buyMeACoffee")}
+                </motion.button>
+              </div>
             </>
           )}
         </div>

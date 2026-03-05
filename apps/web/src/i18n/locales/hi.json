@@ -18,7 +18,11 @@
     "submit": "जमा करें",
     "next": "अगला",
     "previous": "पिछला",
-    "back": "वापस"
+    "back": "वापस",
+    "openMenu": "मेन्यू खोलें",
+    "themeLight": "लाइट",
+    "themeDark": "डार्क",
+    "themeSystem": "सिस्टम"
   },
   "auth": {
     "login": "लॉगिन",
@@ -35,6 +39,9 @@
     "createAccount": "खाता बनाएं",
     "fillDetails": "अपना विवरण भरें।",
     "namePlaceholder": "आपका नाम",
+    "emailPlaceholder": "you@example.com",
+    "phonePlaceholder": "9876543210",
+    "phonePlaceholderShort": "+91...",
     "showPassword": "पासवर्ड दिखाएं",
     "hidePassword": "पासवर्ड छिपाएं"
   },
@@ -42,15 +49,19 @@
     "create": "सूची बनाएं",
     "edit": "सूची संपादित करें",
     "title": "शीर्षक",
+    "titlePlaceholder": "जैसे इंजीनियरिंग मैथ्स की किताब",
     "description": "विवरण",
     "category": "श्रेणी",
     "type": "प्रकार",
     "condition": "स्थिति",
     "price": "मूल्य",
+    "pricePlaceholder": "0",
     "images": "छवियां",
     "selectImages": "छवियां चुनें",
     "atLeastOneImage": "कम से कम एक छवि आवश्यक (अधिकतम 5)",
     "removeImage": "हटाएं",
+    "imagePrevious": "पिछली छवि",
+    "imageNext": "अगली छवि",
     "sell": "बेचें",
     "rent": "किराए पर दें",
     "free": "मुफ्त",
@@ -63,6 +74,7 @@
     "contactByEmail": "ईमेल भेजें",
     "contactByPhone": "कॉल करें",
     "yourListing": "आपकी लिस्टिंग",
+    "saveChanges": "बदलाव सुरक्षित करें",
     "views": "दृश्य",
     "posted": "पोस्ट किया गया",
     "location": "स्थान",
@@ -107,6 +119,8 @@
     "priceRange": "मूल्य सीमा",
     "priceMin": "न्यून",
     "priceMax": "अधिकतम",
+    "pricePlaceholderFilter": "0",
+    "noValue": "—",
     "condition": "स्थिति",
     "radius": "त्रिज्या (किमी)",
     "withinRadius": "{{km}} किमी के भीतर",
@@ -134,7 +148,9 @@
     "email": "ईमेल",
     "phoneOptional": "फ़ोन (वैकल्पिक)",
     "listingCount": "{{count}} लिस्टिंग",
-    "listingsCount": "{{count}} लिस्टिंग"
+    "listingsCount": "{{count}} लिस्टिंग",
+    "deleteListing": "लिस्टिंग हटाएं",
+    "deleteListingConfirm": "इस लिस्टिंग को हटाएं? इसे पूर्ववत नहीं किया जा सकता।"
   },
   "home": {
     "howItWorks": "यह कैसे काम करता है",
@@ -159,7 +175,10 @@
     "shareTitle": "{{appName}} – {{tagline}}",
     "supportUs": "हमें सपोर्ट करें",
     "shareWithOthers": "दूसरों के साथ शेयर करें",
-    "buyMeACoffee": "मुझे एक कॉफी दिलाएं"
+    "buyMeACoffee": "मुझे एक कॉफी दिलाएं",
+    "copied": "कॉपी हो गया!",
+    "clickToCopy": "कॉपी करने के लिए क्लिक करें",
+    "supportPhone": "सहायता / UPI"
   },
   "errors": {
     "required": "यह फ़ील्ड आवश्यक है",
@@ -167,6 +186,7 @@
     "invalidPhone": "अमान्य फोन नंबर",
     "passwordTooShort": "पासवर्ड कम से कम 8 अक्षर का होना चाहिए",
     "somethingWentWrong": "कुछ गलत हो गया",
+    "forbidden": "आपके पास ऐसा करने की अनुमति नहीं है।",
     "networkError": "नेटवर्क त्रुटि। कृपया अपना कनेक्शन जांचें।",
     "priceMin": "कीमत 0 से कम नहीं हो सकती।",
     "priceRequiredSellRent": "बेचने या किराए पर देने के लिए कीमत आवश्यक है और 0 से अधिक होनी चाहिए।",

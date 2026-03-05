@@ -83,7 +83,7 @@ export default function RegisterPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("auth.emailPlaceholder")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -96,7 +96,7 @@ export default function RegisterPage() {
                   id="phone"
                   type="tel"
                   inputMode="numeric"
-                  placeholder="9876543210"
+                  placeholder={t("auth.phonePlaceholder")}
                   value={phone}
                   onChange={(e) => {
                     const v = e.target.value;

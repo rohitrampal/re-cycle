@@ -57,7 +57,7 @@ export function Navbar() {
           size="icon"
           className="md:hidden"
           onClick={toggleSidebar}
-          aria-label="Open menu"
+          aria-label={t("common.openMenu")}
         >
           <Menu className="h-5 w-5" />
         </Button>
@@ -101,15 +101,15 @@ export function Navbar() {
             <DropdownMenuContent align="end" className="min-w-[140px]">
               <DropdownMenuItem onClick={() => setTheme("light")}>
                 <Sun className="mr-2 h-4 w-4" />
-                Light
+                {t("common.themeLight")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("dark")}>
                 <Moon className="mr-2 h-4 w-4" />
-                Dark
+                {t("common.themeDark")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme("system")}>
                 <Monitor className="mr-2 h-4 w-4" />
-                System
+                {t("common.themeSystem")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

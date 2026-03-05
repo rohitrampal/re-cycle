@@ -13,6 +13,7 @@ import {
   Plus,
   LogOut,
   Globe,
+  Trash2,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useAuthMe, useUpdateProfileMutation, useLogoutMutation } from "@/hooks/use-auth";
-import { useMyListings } from "@/hooks/use-listings";
+import { useMyListings, useDeleteListingMutation } from "@/hooks/use-listings";
 import { useAuthStore } from "@/store/auth-store";
 import { useUIStore } from "@/store/ui-store";
 import { SUPPORTED_LANG_CODES, LANGUAGE_NAMES } from "@/i18n/config";
@@ -58,6 +59,7 @@ export default function ProfilePage() {
   const { data: myListingsData, isLoading: listingsLoading } = useMyListings(1, 10);
   const myListings = myListingsData?.data ?? [];
   const pagination = myListingsData?.pagination;
+  const deleteListing = useDeleteListingMutation();
 
   useEffect(() => {
     if (profile) {
@@ -193,8 +195,8 @@ export default function ProfilePage() {
               <ul className="space-y-3">
                 {myListings.map((listing: { id: string; title: string; images?: string[]; category_code?: string; type?: string }) => (
                   <li key={listing.id}>
-                    <Link to={`/listing/${listing.id}`}>
-                      <div className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+                    <div className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
+                      <Link to={`/listing/${listing.id}`} className="flex min-w-0 flex-1 items-center gap-3">
                         <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-muted">
                           {listing.images?.[0] ? (
                             <img
@@ -217,8 +219,38 @@ export default function ProfilePage() {
                             {listing.type ? ` · ${t(`listing.${listing.type}`)}` : ""}
                           </p>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="shrink-0 text-muted-foreground hover:text-foreground"
+                        aria-label={t("listing.edit")}
+                        asChild
+                      >
+                        <Link to={`/listing/${listing.id}/edit`}>
+                          <Pencil className="h-4 w-4" aria-hidden />
+                        </Link>
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                        disabled={deleteListing.isPending}
+                        aria-label={t("profile.deleteListing")}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (!window.confirm(t("profile.deleteListingConfirm"))) return;
+                          deleteListing.mutate(listing.id);
+                        }}
+                      >
+                        {deleteListing.isPending && deleteListing.variables === listing.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                        ) : (
+                          <Trash2 className="h-4 w-4" aria-hidden />
+                        )}
+                      </Button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -258,7 +290,7 @@ export default function ProfilePage() {
                 type="tel"
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
-                placeholder="+91..."
+                placeholder={t("auth.phonePlaceholderShort")}
                 className="mt-1"
               />
             </div>

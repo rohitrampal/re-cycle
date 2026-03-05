@@ -14,6 +14,7 @@ const RegisterPage = React.lazy(() => import("./pages/Register"));
 const BrowsePage = React.lazy(() => import("./pages/Browse"));
 const CreateListingPage = React.lazy(() => import("./pages/CreateListing"));
 const ListingDetailPage = React.lazy(() => import("./pages/ListingDetail"));
+const EditListingPage = React.lazy(() => import("./pages/EditListing"));
 const ProfilePage = React.lazy(() => import("./pages/Profile"));
 
 function App() {
@@ -84,6 +85,18 @@ function App() {
               <Suspense fallback={<PageLoader />}>
                 <ListingDetailPage />
               </Suspense>
+            }
+          />
+          <Route
+            path="/listing/:id/edit"
+            element={
+              isAuthenticated ? (
+                <Suspense fallback={<PageLoader />}>
+                  <EditListingPage />
+                </Suspense>
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route

@@ -78,6 +78,7 @@ export function Sidebar() {
                 size="sm"
                 onClick={() => setTheme(themeKey)}
                 className="flex-1"
+                aria-label={t(`common.theme${themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}`)}
               >
                 {themeKey === "light" && <Sun className="h-4 w-4" />}
                 {themeKey === "dark" && <Moon className="h-4 w-4" />}

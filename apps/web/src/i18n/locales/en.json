@@ -18,7 +18,11 @@
     "submit": "Submit",
     "next": "Next",
     "previous": "Previous",
-    "back": "Back"
+    "back": "Back",
+    "openMenu": "Open menu",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
   },
   "auth": {
     "login": "Login",
@@ -35,6 +39,9 @@
     "createAccount": "Create Account",
     "fillDetails": "Fill in your details.",
     "namePlaceholder": "Your name",
+    "emailPlaceholder": "you@example.com",
+    "phonePlaceholder": "9876543210",
+    "phonePlaceholderShort": "+91...",
     "showPassword": "Show password",
     "hidePassword": "Hide password"
   },
@@ -42,15 +49,19 @@
     "create": "Create Listing",
     "edit": "Edit Listing",
     "title": "Title",
+    "titlePlaceholder": "e.g. Engineering Maths textbook",
     "description": "Description",
     "category": "Category",
     "type": "Type",
     "condition": "Condition",
     "price": "Price",
+    "pricePlaceholder": "0",
     "images": "Images",
     "selectImages": "Select images",
     "atLeastOneImage": "At least one image is required (max 5)",
     "removeImage": "Remove",
+    "imagePrevious": "Previous image",
+    "imageNext": "Next image",
     "sell": "Sell",
     "rent": "Rent",
     "free": "Free",
@@ -63,6 +74,7 @@
     "contactByEmail": "Send email",
     "contactByPhone": "Call",
     "yourListing": "Your listing",
+    "saveChanges": "Save changes",
     "views": "Views",
     "posted": "Posted",
     "location": "Location",
@@ -107,6 +119,8 @@
     "priceRange": "Price Range",
     "priceMin": "Min",
     "priceMax": "Max",
+    "pricePlaceholderFilter": "0",
+    "noValue": "—",
     "condition": "Condition",
     "radius": "Radius (km)",
     "withinRadius": "Within {{km}} km",
@@ -134,7 +148,9 @@
     "email": "Email",
     "phoneOptional": "Phone (optional)",
     "listingCount": "{{count}} listing",
-    "listingsCount": "{{count}} listings"
+    "listingsCount": "{{count}} listings",
+    "deleteListing": "Delete listing",
+    "deleteListingConfirm": "Delete this listing? This cannot be undone."
   },
   "home": {
     "howItWorks": "How it works",
@@ -159,7 +175,10 @@
     "shareTitle": "{{appName}} – {{tagline}}",
     "supportUs": "Support us",
     "shareWithOthers": "Share with others",
-    "buyMeACoffee": "Buy me a coffee"
+    "buyMeACoffee": "Buy me a coffee",
+    "copied": "Copied!",
+    "clickToCopy": "Click to copy",
+    "supportPhone": "Support / UPI"
   },
   "errors": {
     "required": "This field is required",
@@ -167,6 +186,7 @@
     "invalidPhone": "Invalid phone number",
     "passwordTooShort": "Password must be at least 8 characters",
     "somethingWentWrong": "Something went wrong",
+    "forbidden": "You don't have permission to do this.",
     "networkError": "Network error. Please check your connection.",
     "priceMin": "Price cannot be less than 0.",
     "priceRequiredSellRent": "Price is required and must be greater than 0 for sell or rent.",

@@ -162,6 +162,7 @@ export function useUpdateListingMutation() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.listings.detail(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.listings.lists() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.listings.all });
     },
   });
 }
@@ -178,6 +179,8 @@ export function useDeleteListingMutation() {
     onSuccess: (_, id) => {
       queryClient.removeQueries({ queryKey: queryKeys.listings.detail(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.listings.lists() });
+      // Invalidate "My Listings" so Profile (and any other consumer) refetches and removes the deleted item
+      queryClient.invalidateQueries({ queryKey: queryKeys.listings.all });
     },
   });
 }
