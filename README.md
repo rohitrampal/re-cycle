@@ -64,6 +64,11 @@ npm run dev:backend
 
 See `.env.example` files in respective apps for required environment variables.
 
+## Production & Deployment
+
+- **[Production Security Checklist](docs/PRODUCTION_SECURITY.md)** – Hardening, secrets, and security checklist before going live.
+- **[Deployment Options](docs/DEPLOYMENT.md)** – Ways to deploy from free tier (single VPS, PaaS) to cloud-native and Kubernetes.
+
 ## License
 
 MIT

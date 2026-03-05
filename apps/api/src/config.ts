@@ -63,7 +63,7 @@ export const config = {
 };
 
 /**
- * Validate config for production: require non-default secrets.
+ * Validate config for production: require non-default secrets and safe values.
  */
 export function validateProductionConfig(): void {
   if (process.env.NODE_ENV !== 'production') return;
@@ -73,6 +73,12 @@ export function validateProductionConfig(): void {
   }
   if (!process.env.COOKIE_SECRET || process.env.COOKIE_SECRET === DEFAULT_SECRET) {
     errors.push('COOKIE_SECRET must be set to a secure value in production');
+  }
+  if (!config.database.password || config.database.password.length < 8) {
+    errors.push('DB_PASSWORD must be set and at least 8 characters in production');
+  }
+  if (!config.corsOrigin || config.corsOrigin.includes('*')) {
+    errors.push('CORS_ORIGIN must be set to your production frontend origin(s); do not use wildcard (*)');
   }
   if (errors.length > 0) {
     throw new Error(`Production config invalid: ${errors.join('; ')}`);

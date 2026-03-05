@@ -41,7 +41,9 @@ export default async function csrfPlugin(
   const allowed = new Set(opts.allowedOrigins.map((o) => o.toLowerCase()));
 
   // Set CSRF token cookie on GET requests (if not already set)
+  // Skip for /api/csrf-token so that route can set cookie and return token in body (cross-origin friendly)
   fastify.addHook('onRequest', async (request: FastifyRequest, reply: FastifyReply) => {
+    if (request.url === '/api/csrf-token') return;
     // Only set cookie on GET requests to avoid unnecessary cookie setting
     if (request.method === 'GET' && !request.cookies[CSRF_COOKIE_NAME]) {
       const token = generateCsrfToken();

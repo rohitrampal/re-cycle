@@ -3,6 +3,24 @@ import { ApiResponse } from '@recycle/shared';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
+/** Fetch and cache CSRF token for state-changing requests (cross-origin safe). */
+let csrfTokenPromise: Promise<string> | null = null;
+export async function getCsrfToken(): Promise<string> {
+  if (csrfTokenPromise) return csrfTokenPromise;
+  const base = API_BASE_URL.replace(/\/$/, '');
+  csrfTokenPromise = fetch(`${base}/csrf-token`, { credentials: 'include' })
+    .then((r) => r.json())
+    .then((data: { csrfToken?: string }) => data.csrfToken || '');
+  return csrfTokenPromise;
+}
+
+/** Reset cached CSRF token (e.g. after logout if you want a fresh token). */
+export function clearCsrfToken(): void {
+  csrfTokenPromise = null;
+}
+
+const STATE_CHANGING_METHODS = new Set(['post', 'put', 'patch', 'delete']);
+
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -13,12 +31,19 @@ const apiClient: AxiosInstance = axios.create({
   withCredentials: true, // For cookies (refresh tokens)
 });
 
-// Request interceptor - Add auth token; let browser set Content-Type for FormData (including boundary)
+// Request interceptor - Add auth token and CSRF token; let browser set Content-Type for FormData (including boundary)
 apiClient.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('accessToken');
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (config.method && STATE_CHANGING_METHODS.has(config.method.toLowerCase()) && config.headers) {
+      try {
+        config.headers['x-csrf-token'] = await getCsrfToken();
+      } catch {
+        // Proceed without CSRF if endpoint fails (e.g. network); server will reject if required
+      }
     }
     // FormData must be sent without a manual Content-Type so the browser sets
     // multipart/form-data; boundary=... (otherwise the server receives empty file body)

@@ -4,6 +4,7 @@ import { s3Service } from '../services/s3.service';
 import { AppError, ErrorCode } from '../utils/errors';
 import { FILE_UPLOAD } from '../constants';
 import { createIpRateLimitMiddleware } from '../utils/ip-rate-limit';
+import { validateS3Key } from '../utils/s3-key-validator';
 
 export default async function uploadRoutes(fastify: FastifyInstance) {
   // IP-based rate limiting for uploads (DoS protection)
@@ -151,6 +152,7 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
   /**
    * Delete file from S3
    * DELETE /api/upload/:key
+   * Key must be under allowed prefixes (listings/, avatars/, uploads/) and must not contain path traversal.
    */
   fastify.delete(
     '/:key',
@@ -160,9 +162,14 @@ export default async function uploadRoutes(fastify: FastifyInstance) {
     async (request: FastifyRequest, reply: FastifyReply) => {
       const { key } = request.params as { key: string };
 
-      // Decode URL-encoded key
-      const decodedKey = decodeURIComponent(key);
+      let decodedKey: string;
+      try {
+        decodedKey = decodeURIComponent(key);
+      } catch {
+        throw new AppError(ErrorCode.VALIDATION_ERROR, 'Invalid file key', 400);
+      }
 
+      validateS3Key(decodedKey);
       await s3Service.deleteFile(decodedKey);
 
       return {

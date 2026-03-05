@@ -54,6 +54,9 @@ server.register(helmet, {
       imgSrc: ["'self'", 'data:', 'https:'],
     },
   },
+  hsts: config.isProduction
+    ? { maxAge: 31536000, includeSubDomains: true, preload: true }
+    : false,
 });
 
 server.register(cors, {
@@ -113,6 +116,20 @@ server.register(multipart, {
     fileSize: 10 * 1024 * 1024, // 10MB
     files: 5,
   },
+});
+
+// CSRF token endpoint: returns token in body so cross-origin frontends can send it in header
+server.get('/api/csrf-token', async (_, reply) => {
+  const { generateCsrfToken } = await import('./utils/csrf');
+  const token = generateCsrfToken();
+  reply.setCookie('XSRF-TOKEN', token, {
+    httpOnly: false,
+    secure: config.isProduction,
+    sameSite: 'strict',
+    path: '/',
+    maxAge: 24 * 60 * 60,
+  });
+  return { csrfToken: token };
 });
 
 // Health check
