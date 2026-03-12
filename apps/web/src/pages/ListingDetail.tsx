@@ -14,6 +14,7 @@ import {
 import { useListing, useUpdateListingMutation } from "@/hooks/use-listings";
 import { useAuthStore } from "@/store/auth-store";
 import { LISTING_CATEGORIES } from "@/lib/listing-categories";
+import type { ListingWithUser } from "@recycle/shared";
 
 export default function ListingDetailPage() {
   const { t } = useTranslation();
@@ -74,7 +75,7 @@ export default function ListingDetailPage() {
     listing.type === "free" || listing.price == null || listing.price === 0
       ? t("listing.free")
       : `₹${Number(listing.price).toLocaleString()}`;
-  const user = "user" in listing ? (listing as { user?: { id?: string; name?: string; email?: string } }).user : null;
+  const user = "user" in listing ? (listing as ListingWithUser).user : null;
   const ownerId = (listing as { user_id?: string }).user_id ?? user?.id;
   const isOwner = !!id && !!authUser?.id && authUser.id === ownerId;
   const hasLocation =

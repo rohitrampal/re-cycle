@@ -60,7 +60,12 @@ export interface CreateListingBody {
 }
 
 // Update listing body (partial + clearLocation to remove location)
-export type UpdateListingBody = Partial<Listing> & { clearLocation?: boolean };
+export type UpdateListingBody = Partial<Listing> & {
+  clearLocation?: boolean;
+  categoryCode?: string;
+  latitude?: number;
+  longitude?: number;
+};
 
 // Listing endpoints (unwrap axios .data so callers get ApiResponse<T>)
 export const listingApi = {

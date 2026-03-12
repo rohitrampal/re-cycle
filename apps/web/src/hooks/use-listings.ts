@@ -7,7 +7,7 @@ import {
 import { listingApi, type CreateListingBody, type UpdateListingBody } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query-keys';
 import { unwrapApiResponse } from '@/lib/react-query';
-import type { ListingWithUser } from '@recycle/shared';
+import type { Listing, ListingWithUser, PaginatedResponse } from '@recycle/shared';
 
 /** Search response shape from API (cursor-based) */
 export interface SearchResponse {
@@ -114,7 +114,7 @@ export function useListing(id: string | undefined, options?: { enabled?: boolean
 
 /** Current user's listings (paginated) */
 export function useMyListings(page = 1, limit = 20) {
-  return useQuery({
+  return useQuery<PaginatedResponse<Listing>>({
     queryKey: queryKeys.listings.myListings(page),
     queryFn: async () => {
       const res = await listingApi.getMyListings(page, limit);
@@ -140,10 +140,12 @@ export function useCreateListingMutation() {
   });
 }
 
+const UPLOAD_IMAGES_RESPONSE = { urls: [] as Array<{ url: string; thumbnailUrl?: string }> };
+
 /** Upload listing images (e.g. before create) */
 export function useUploadListingImagesMutation() {
-  return useMutation({
-    mutationFn: async (files: File[]) => {
+  return useMutation<typeof UPLOAD_IMAGES_RESPONSE, Error, File[]>({
+    mutationFn: async (files) => {
       const res = await listingApi.uploadListingImages(files);
       return unwrapApiResponse(res);
     },

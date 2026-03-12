@@ -23,7 +23,8 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/types/*": ["./src/types/*"],
       "@/store/*": ["./src/store/*"],
-      "@/i18n/*": ["./src/i18n/*"]
+      "@/i18n/*": ["./src/i18n/*"],
+      "@recycle/shared": ["../../packages/shared/src/index.ts"]
     }
   },
   "include": ["src"],

@@ -3,7 +3,7 @@ import { authApi, userApi } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query-keys';
 import { unwrapApiResponse } from '@/lib/react-query';
 import { useAuthStore } from '@/store/auth-store';
-import type { LoginCredentials, RegisterData, UserProfile } from '@recycle/shared';
+import type { AuthResponse, LoginCredentials, RegisterData, UserProfile } from '@recycle/shared';
 
 /** Fetch current user; enabled only when token exists. Use for app bootstrap and auth state sync. */
 export function useAuthMe(options?: { enabled?: boolean }) {
@@ -26,8 +26,8 @@ export function useLoginMutation() {
   const queryClient = useQueryClient();
   const setAuth = useAuthStore((s) => s.setAuth);
 
-  return useMutation({
-    mutationFn: async (credentials: LoginCredentials) => {
+  return useMutation<AuthResponse, Error, LoginCredentials>({
+    mutationFn: async (credentials) => {
       const res = await authApi.login(credentials);
       return unwrapApiResponse(res);
     },
@@ -43,8 +43,8 @@ export function useRegisterMutation() {
   const queryClient = useQueryClient();
   const setAuth = useAuthStore((s) => s.setAuth);
 
-  return useMutation({
-    mutationFn: async (data: RegisterData) => {
+  return useMutation<AuthResponse, Error, RegisterData>({
+    mutationFn: async (data) => {
       const res = await authApi.register(data);
       return unwrapApiResponse(res);
     },
