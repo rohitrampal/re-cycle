@@ -589,11 +589,11 @@ export default async function listingRoutes(fastify: FastifyInstance) {
       const { id } = request.params as { id: string };
 
       // Load listing images so we can delete them from S3 (avoid orphaned blobs)
-      const listResult = await db.query<{ images: string[] | null }>(
+      const listResult = await db.query(
         'SELECT images FROM listings WHERE id = $1',
         [id]
       );
-      const images: string[] = listResult.rows[0]?.images ?? [];
+      const images: string[] = (listResult.rows[0]?.images as string[] | null) ?? [];
       const keysToDelete: string[] = [];
       for (const url of images) {
         if (!url || typeof url !== 'string') continue;

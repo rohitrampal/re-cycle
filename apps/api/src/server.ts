@@ -90,7 +90,7 @@ server.register(csrfPlugin, { allowedOrigins: config.allowedOrigins });
 
 // Validation plugin: wrap with fastify-plugin so it runs in root context and decorates the root.
 // Otherwise register() runs it in a child context and route plugins (users, listings, etc.) never see .validate.
-server.register(fp(validationPlugin), { name: 'validation' });
+server.register(fp(validationPlugin));
 
 server.register(errorHandlerPlugin);
 server.register(requestLoggerPlugin);

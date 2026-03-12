@@ -1,4 +1,4 @@
-import { Client, GeocodingRequest, GeocodingResponse, PlaceAutocompleteRequest, PlaceAutocompleteResponse, PlaceDetailsRequest, PlaceDetailsResponse } from '@googlemaps/google-maps-services-js';
+import { Client } from '@googlemaps/google-maps-services-js';
 import { config } from '../config';
 
 const client = new Client({});
@@ -57,14 +57,14 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult | n
   }
 
   try {
-    const request: GeocodingRequest = {
+    const request: any = {
       params: {
         address,
         key: config.googleMaps.apiKey,
       },
     };
 
-    const response: GeocodingResponse = await client.geocode(request);
+    const response: any = await client.geocode(request);
 
     if (response.data.status !== 'OK' || !response.data.results || response.data.results.length === 0) {
       return null;
@@ -75,8 +75,8 @@ export async function geocodeAddress(address: string): Promise<GeocodeResult | n
 
     // Parse address components
     const addressComponents: GeocodeResult['addressComponents'] = {};
-    result.address_components?.forEach((component) => {
-      const types = component.types || [];
+    result.address_components?.forEach((component: any) => {
+      const types: string[] = component.types || [];
       if (types.includes('street_number')) {
         addressComponents.streetNumber = component.long_name;
       }
@@ -118,14 +118,14 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
   }
 
   try {
-    const request: GeocodingRequest = {
+    const request: any = {
       params: {
         latlng: { lat: latitude, lng: longitude },
         key: config.googleMaps.apiKey,
       },
     };
 
-    const response: GeocodingResponse = await client.geocode(request);
+    const response: any = await client.geocode(request);
 
     if (response.data.status !== 'OK' || !response.data.results || response.data.results.length === 0) {
       return null;
@@ -136,8 +136,8 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
 
     // Parse address components
     const addressComponents: GeocodeResult['addressComponents'] = {};
-    result.address_components?.forEach((component) => {
-      const types = component.types || [];
+    result.address_components?.forEach((component: any) => {
+      const types: string[] = component.types || [];
       if (types.includes('street_number')) {
         addressComponents.streetNumber = component.long_name;
       }
@@ -187,7 +187,7 @@ export async function searchPlaces(
   }
 
   try {
-    const request: PlaceAutocompleteRequest = {
+    const request: any = {
       params: {
         input,
         key: config.googleMaps.apiKey,
@@ -198,7 +198,7 @@ export async function searchPlaces(
       },
     };
 
-    const response: PlaceAutocompleteResponse = await client.placeAutocomplete(request);
+    const response: any = await client.placeAutocomplete(request);
 
     if (response.data.status !== 'OK' && response.data.status !== 'ZERO_RESULTS') {
       throw new Error(`Place autocomplete error: ${response.data.status}`);
@@ -208,7 +208,7 @@ export async function searchPlaces(
       return [];
     }
 
-    return response.data.predictions.map((prediction) => ({
+    return response.data.predictions.map((prediction: any) => ({
       placeId: prediction.place_id,
       description: prediction.description,
       mainText: prediction.structured_formatting?.main_text || prediction.description,
@@ -229,7 +229,7 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetailsResu
   }
 
   try {
-    const request: PlaceDetailsRequest = {
+    const request: any = {
       params: {
         place_id: placeId,
         key: config.googleMaps.apiKey,
@@ -237,7 +237,7 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetailsResu
       },
     };
 
-    const response: PlaceDetailsResponse = await client.placeDetails(request);
+    const response: any = await client.placeDetails(request);
 
     if (response.data.status !== 'OK' || !response.data.result) {
       return null;
@@ -252,8 +252,8 @@ export async function getPlaceDetails(placeId: string): Promise<PlaceDetailsResu
 
     // Parse address components
     const addressComponents: PlaceDetailsResult['addressComponents'] = {};
-    result.address_components?.forEach((component) => {
-      const types = component.types || [];
+    result.address_components?.forEach((component: any) => {
+      const types: string[] = component.types || [];
       if (types.includes('street_number')) {
         addressComponents.streetNumber = component.long_name;
       }

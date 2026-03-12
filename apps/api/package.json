@@ -4,8 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy:migrations",
+    "copy:migrations": "node -e \"const fs=require('fs'); const d='dist/database/migrations'; fs.mkdirSync(d,{recursive:true}); fs.readdirSync('src/database/migrations').forEach(f=>fs.copyFileSync('src/database/migrations/'+f, d+'/'+f))\"",
     "start": "node dist/server.js",
+    "db:migrate:prod": "node -r dotenv/config dist/database/migrate.js",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit",
     "db:migrate": "tsx -r dotenv/config src/database/migrate.ts",
