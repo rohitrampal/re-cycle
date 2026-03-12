@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 import { getUserSchema, updateUserProfileSchema } from '../schemas/user.schema';
 import { authenticate } from '../middleware/auth';
 import { AppError, ErrorCode } from '../utils/errors';

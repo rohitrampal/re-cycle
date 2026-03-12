@@ -2,7 +2,7 @@
  * Notifications: create in-app notifications when new listings match a user's search alert (within radius).
  */
 
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 
 export interface NewListingForMatch {
   id: string;

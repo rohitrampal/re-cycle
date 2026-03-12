@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 
 /**
  * Hash a refresh token for storage (we never store plaintext).

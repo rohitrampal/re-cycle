@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 import {
   createListingSchema,
   updateListingSchema,

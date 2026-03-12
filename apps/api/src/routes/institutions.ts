@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 import { searchInstitutionsSchema, createInstitutionSchema } from '../schemas/institution.schema';
 import { geocodeAddress, searchPlaces } from '../services/google-location.service';
 import { config } from '../config.js';

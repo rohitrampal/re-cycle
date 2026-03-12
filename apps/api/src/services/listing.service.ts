@@ -1,4 +1,4 @@
-import { db } from '../database/improved';
+import { db } from '../database/improved.js';
 import { roundForStorage } from '../utils/location';
 
 interface Listing {
