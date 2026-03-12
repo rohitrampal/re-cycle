@@ -1,19 +1,19 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db } from '../database/improved.js';
-import { hashPassword, verifyPassword } from '../utils/auth';
+import { hashPassword, verifyPassword } from '../utils/auth.js';
 import {
   registerSchema,
   loginSchema,
   refreshTokenSchema,
-} from '../schemas/auth.schema';
-import { AppError, ErrorCode } from '../utils/errors';
-import { sanitizeText } from '../utils/sanitize';
-import { authenticate } from '../middleware/auth';
+} from '../schemas/auth.schema.js';
+import { AppError, ErrorCode } from '../utils/errors.js';
+import { sanitizeText } from '../utils/sanitize.js';
+import { authenticate } from '../middleware/auth.js';
 import {
   storeRefreshToken,
   validateRefreshToken,
   revokeRefreshToken,
-} from '../utils/token-store';
+} from '../utils/token-store.js';
 
 export default async function authRoutes(fastify: FastifyInstance) {
   // Register

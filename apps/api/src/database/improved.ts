@@ -1,6 +1,6 @@
 import { Pool, PoolClient, QueryResult } from 'pg';
 import { config } from '../config.js';
-import { CircuitBreaker } from '../utils/circuit-breaker';
+import { CircuitBreaker } from '../utils/circuit-breaker.js';
 
 interface QueryOptions {
   timeout?: number;

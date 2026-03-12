@@ -3,7 +3,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
 import { config } from '../config.js';
 import { AppError, ErrorCode } from '../utils/errors';
-import { FILE_UPLOAD } from '../constants';
+import { FILE_UPLOAD } from '../constants/index.js';
 import { validateFile, validateMimeType } from '../utils/file-validator';
 
 export interface UploadOptions {

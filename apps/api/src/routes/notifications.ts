@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { db } from '../database/improved.js';
-import { authenticate } from '../middleware/auth';
-import { getNotificationsSchema, notificationIdSchema } from '../schemas/notification.schema';
-import { AppError, ErrorCode } from '../utils/errors';
+import { authenticate } from '../middleware/auth.js';
+import { getNotificationsSchema, notificationIdSchema } from '../schemas/notification.schema.js';
+import { AppError, ErrorCode } from '../utils/errors.js';
 
 export default async function notificationRoutes(fastify: FastifyInstance) {
   fastify.get(

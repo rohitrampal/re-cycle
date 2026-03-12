@@ -1,5 +1,5 @@
 import { db } from '../database/improved.js';
-import { roundForStorage } from '../utils/location';
+import { roundForStorage } from '../utils/location.js';
 
 interface Listing {
   id: string;

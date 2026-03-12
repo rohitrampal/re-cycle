@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { authenticate } from '../middleware/auth';
 import { s3Service } from '../services/s3.service';
 import { AppError, ErrorCode } from '../utils/errors';
-import { FILE_UPLOAD } from '../constants';
+import { FILE_UPLOAD } from '../constants/index.js';
 import { createIpRateLimitMiddleware } from '../utils/ip-rate-limit';
 import { validateS3Key } from '../utils/s3-key-validator';
 

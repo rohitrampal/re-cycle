@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { db } from '../database/improved.js';
-import { authenticate } from '../middleware/auth';
-import { createSearchAlertSchema, getSearchAlertSchema } from '../schemas/search-alert.schema';
-import { AppError, ErrorCode } from '../utils/errors';
+import { authenticate } from '../middleware/auth.js';
+import { createSearchAlertSchema, getSearchAlertSchema } from '../schemas/search-alert.schema.js';
+import { AppError, ErrorCode } from '../utils/errors.js';
 
 export default async function searchAlertRoutes(fastify: FastifyInstance) {
   fastify.post(

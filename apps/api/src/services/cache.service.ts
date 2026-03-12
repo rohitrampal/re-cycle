@@ -5,7 +5,7 @@
 
 import Redis from 'ioredis';
 import { config } from '../config.js';
-import { CACHE_TTL } from '../constants';
+import { CACHE_TTL } from '../constants/index.js';
 
 type CacheBackend = 'redis' | 'memory';
 

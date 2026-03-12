@@ -1,6 +1,6 @@
 import { FastifyRequest } from 'fastify';
-import { checkRouteRateLimit } from './route-rate-limit';
-import { getClientIp } from './ip-utils';
+import { checkRouteRateLimit } from './route-rate-limit.js';
+import { getClientIp } from './ip-utils.js';
 
 /**
  * IP-based rate limiting to prevent DoS attacks

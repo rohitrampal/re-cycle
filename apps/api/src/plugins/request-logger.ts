@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { randomUUID } from 'crypto';
-import { incrementRequestCount } from '../utils/metrics';
+import { incrementRequestCount } from '../utils/metrics.js';
 
 const SLOW_MS = 2000; // log as slow if duration >= 2s
 

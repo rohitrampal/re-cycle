@@ -1,8 +1,8 @@
 import { FastifyPluginAsync, FastifyError } from 'fastify';
-import { AppError, ErrorCode, sendError } from '../utils/errors';
+import { AppError, ErrorCode, sendError } from '../utils/errors.js';
 import { config } from '../config.js';
-import { incrementErrorCount } from '../utils/metrics';
-import { reportError } from '../utils/error-reporter';
+import { incrementErrorCount } from '../utils/metrics.js';
+import { reportError } from '../utils/error-reporter.js';
 
 const errorHandlerPlugin: FastifyPluginAsync = async (fastify) => {
   fastify.setErrorHandler((error: FastifyError | AppError, request, reply) => {

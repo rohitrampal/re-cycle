@@ -9,7 +9,7 @@
  */
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { generateCsrfToken, validateCsrfToken } from '../utils/csrf';
+import { generateCsrfToken, validateCsrfToken } from '../utils/csrf.js';
 import { config } from '../config.js';
 
 const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);

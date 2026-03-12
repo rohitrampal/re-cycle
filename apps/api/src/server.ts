@@ -7,23 +7,23 @@ import cookie from '@fastify/cookie';
 import multipart from '@fastify/multipart';
 import { config, validateProductionConfig } from './config.js';
 import { db } from './database/improved.js';
-import { RATE_LIMITS } from './constants';
-import { getMetrics } from './utils/metrics';
-import { getCacheBackend } from './services/cache.service';
+import { RATE_LIMITS } from './constants/index.js';
+import { getMetrics } from './utils/metrics.js';
+import { getCacheBackend } from './services/cache.service.js';
 import fp from 'fastify-plugin';
-import validationPlugin from './plugins/validation';
-import errorHandlerPlugin from './plugins/error-handler';
-import requestLoggerPlugin, { errSerializer } from './plugins/request-logger';
-import csrfPlugin from './plugins/csrf';
-import authRoutes from './routes/auth';
-import userRoutes from './routes/users';
-import listingRoutes from './routes/listings';
-import locationRoutes from './routes/location';
-import institutionRoutes from './routes/institutions';
-import uploadRoutes from './routes/upload';
-import searchAlertRoutes from './routes/search-alerts';
-import notificationRoutes from './routes/notifications';
-import geocodingRoutes from './routes/geocoding';
+import validationPlugin from './plugins/validation.js';
+import errorHandlerPlugin from './plugins/error-handler.js';
+import requestLoggerPlugin, { errSerializer } from './plugins/request-logger.js';
+import csrfPlugin from './plugins/csrf.js';
+import authRoutes from './routes/auth.js';
+import userRoutes from './routes/users.js';
+import listingRoutes from './routes/listings.js';
+import locationRoutes from './routes/location.js';
+import institutionRoutes from './routes/institutions.js';
+import uploadRoutes from './routes/upload.js';
+import searchAlertRoutes from './routes/search-alerts.js';
+import notificationRoutes from './routes/notifications.js';
+import geocodingRoutes from './routes/geocoding.js';
 
 const server = Fastify({
   bodyLimit: 1024 * 1024, // 1MB JSON body limit
@@ -120,7 +120,7 @@ server.register(multipart, {
 
 // CSRF token endpoint: returns token in body so cross-origin frontends can send it in header
 server.get('/api/csrf-token', async (_, reply) => {
-  const { generateCsrfToken } = await import('./utils/csrf');
+  const { generateCsrfToken } = await import('./utils/csrf.js');
   const token = generateCsrfToken();
   reply.setCookie('XSRF-TOKEN', token, {
     httpOnly: false,

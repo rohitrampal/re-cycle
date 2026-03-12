@@ -12,11 +12,11 @@ import { createRatingSchema, getListingRatingSchema } from '../schemas/rating.sc
 import { authenticate, authorize } from '../middleware/auth';
 import { listingService } from '../services/listing.service';
 import { AppError, ErrorCode } from '../utils/errors';
-import { RATE_LIMITS } from '../constants';
+import { RATE_LIMITS } from '../constants/index.js';
 import { checkRouteRateLimit } from '../utils/route-rate-limit';
 import { cacheGet, cacheSet, cacheDel, cacheKey } from '../services/cache.service';
 import { s3Service } from '../services/s3.service';
-import { CACHE_TTL } from '../constants';
+import { CACHE_TTL } from '../constants/index.js';
 import { notifyMatchingSearchAlerts } from '../services/notification.service';
 import { roundForResponse, roundForStorage } from '../utils/location';
 

@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { db } from '../database/improved.js';
-import { updateLocationSchema, getNearbyListingsSchema } from '../schemas/location.schema';
-import { authenticate } from '../middleware/auth';
+import { updateLocationSchema, getNearbyListingsSchema } from '../schemas/location.schema.js';
+import { authenticate } from '../middleware/auth.js';
 
 export default async function locationRoutes(fastify: FastifyInstance) {
   // Update user location

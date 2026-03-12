@@ -1,5 +1,5 @@
-import { AppError, ErrorCode } from './errors';
-import { FILE_UPLOAD } from '../constants';
+import { AppError, ErrorCode } from './errors.js';
+import { FILE_UPLOAD } from '../constants/index.js';
 
 /**
  * Validate uploaded file

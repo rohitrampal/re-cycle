@@ -1,4 +1,4 @@
-import { AppError, ErrorCode } from './errors';
+import { AppError, ErrorCode } from './errors.js';
 
 /** Allowed S3 key prefixes (no trailing slash in pattern; key may have subpaths like listings/thumbnails/) */
 const ALLOWED_KEY_PREFIXES = ['listings/', 'avatars/', 'uploads/'];

@@ -1,2 +1,2 @@
 // Re-export improved database as default
-export { db } from './improved';
+export { db } from './improved.js';

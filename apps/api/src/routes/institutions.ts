@@ -1,9 +1,9 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { db } from '../database/improved.js';
-import { searchInstitutionsSchema, createInstitutionSchema } from '../schemas/institution.schema';
-import { geocodeAddress, searchPlaces } from '../services/google-location.service';
+import { searchInstitutionsSchema, createInstitutionSchema } from '../schemas/institution.schema.js';
+import { geocodeAddress, searchPlaces } from '../services/google-location.service.js';
 import { config } from '../config.js';
-import { authenticate } from '../middleware/auth';
+import { authenticate } from '../middleware/auth.js';
 
 export default async function institutionRoutes(fastify: FastifyInstance) {
   // Search institutions (database search)
@@ -119,7 +119,7 @@ export default async function institutionRoutes(fastify: FastifyInstance) {
       // If placeId is provided, get details from Google Places
       if (body.placeId && config.googleMaps.apiKey) {
         try {
-          const { getPlaceDetails } = await import('../services/google-location.service');
+          const { getPlaceDetails } = await import('../services/google-location.service.js');
           const placeDetails = await getPlaceDetails(body.placeId);
           if (placeDetails) {
             latitude = placeDetails.latitude;
