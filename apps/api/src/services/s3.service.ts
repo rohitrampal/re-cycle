@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
-import { config } from '../config';
+import { config } from '../config.js';
 import { AppError, ErrorCode } from '../utils/errors';
 import { FILE_UPLOAD } from '../constants';
 import { validateFile, validateMimeType } from '../utils/file-validator';

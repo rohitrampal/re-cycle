@@ -1,6 +1,6 @@
 import { FastifyPluginAsync, FastifyError } from 'fastify';
 import { AppError, ErrorCode, sendError } from '../utils/errors';
-import { config } from '../config';
+import { config } from '../config.js';
 import { incrementErrorCount } from '../utils/metrics';
 import { reportError } from '../utils/error-reporter';
 

@@ -4,7 +4,7 @@
  * to enable. By default no-ops so the app works without any setup.
  */
 
-import { config } from '../config';
+import { config } from '../config.js';
 
 let reportFn: ((error: Error, context?: Record<string, unknown>) => void) | null = null;
 

@@ -1,5 +1,5 @@
 import { Client } from '@googlemaps/google-maps-services-js';
-import { config } from '../config';
+import { config } from '../config.js';
 
 const client = new Client({});
 

@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest } from 'fastify';
 import { db } from '../database/improved';
 import { searchInstitutionsSchema, createInstitutionSchema } from '../schemas/institution.schema';
 import { geocodeAddress, searchPlaces } from '../services/google-location.service';
-import { config } from '../config';
+import { config } from '../config.js';
 import { authenticate } from '../middleware/auth';
 
 export default async function institutionRoutes(fastify: FastifyInstance) {

@@ -10,7 +10,7 @@
 
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { generateCsrfToken, validateCsrfToken } from '../utils/csrf';
-import { config } from '../config';
+import { config } from '../config.js';
 
 const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const CSRF_COOKIE_NAME = 'XSRF-TOKEN';

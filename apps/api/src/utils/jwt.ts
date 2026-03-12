@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { config } from '../config.js';
 import { FastifyInstance } from 'fastify';
 
 export function generateTokens(

@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
 import { geocodeAddress, reverseGeocode, searchPlaces, getPlaceDetails } from '../services/google-location.service';
-import { config } from '../config';
+import { config } from '../config.js';
 import { z } from 'zod';
 
 const geocodeSchema = z.object({
