@@ -1,3 +1,4 @@
+import dotenv from 'dotenv';
 import Fastify, { FastifyRequest, FastifyReply } from 'fastify';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
@@ -24,6 +25,8 @@ import uploadRoutes from './routes/upload.js';
 import searchAlertRoutes from './routes/search-alerts.js';
 import notificationRoutes from './routes/notifications.js';
 import geocodingRoutes from './routes/geocoding.js';
+
+dotenv.config();
 
 const server = Fastify({
   bodyLimit: 1024 * 1024, // 1MB JSON body limit
