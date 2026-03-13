@@ -136,7 +136,7 @@ server.get('/api/csrf-token', async (_, reply) => {
 });
 
 // Health check
-server.get('/health', async () => {
+server.get('/api/health', async () => {
   const dbHealth = await db.healthCheck();
   return {
     status: dbHealth.healthy ? 'ok' : 'degraded',
@@ -150,7 +150,7 @@ server.get('/health', async () => {
 });
 
 // Metrics (in production require METRICS_API_KEY query param if set)
-server.get('/metrics', async (request, reply) => {
+server.get('/api/metrics', async (request, reply) => {
   const metricsKey = process.env.METRICS_API_KEY;
   if (config.isProduction && metricsKey) {
     const provided = (request.query as { key?: string })?.key;
