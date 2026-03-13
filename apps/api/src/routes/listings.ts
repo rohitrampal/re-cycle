@@ -7,18 +7,18 @@ import {
   searchListingsSchema,
   getMyListingsSchema,
   deleteListingSchema,
-} from '../schemas/listing.schema';
-import { createRatingSchema, getListingRatingSchema } from '../schemas/rating.schema';
-import { authenticate, authorize } from '../middleware/auth';
-import { listingService } from '../services/listing.service';
-import { AppError, ErrorCode } from '../utils/errors';
+} from '../schemas/listing.schema.js';
+import { createRatingSchema, getListingRatingSchema } from '../schemas/rating.schema.js';
+import { authenticate, authorize } from '../middleware/auth.js';
+import { listingService } from '../services/listing.service.js';
+import { AppError, ErrorCode } from '../utils/errors.js';
 import { RATE_LIMITS } from '../constants/index.js';
-import { checkRouteRateLimit } from '../utils/route-rate-limit';
-import { cacheGet, cacheSet, cacheDel, cacheKey } from '../services/cache.service';
-import { s3Service } from '../services/s3.service';
+import { checkRouteRateLimit } from '../utils/route-rate-limit.js';
+import { cacheGet, cacheSet, cacheDel, cacheKey } from '../services/cache.service.js';
+import { s3Service } from '../services/s3.service.js';
 import { CACHE_TTL } from '../constants/index.js';
-import { notifyMatchingSearchAlerts } from '../services/notification.service';
-import { roundForResponse, roundForStorage } from '../utils/location';
+import { notifyMatchingSearchAlerts } from '../services/notification.service.js';
+import { roundForResponse, roundForStorage } from '../utils/location.js';
 
 export default async function listingRoutes(fastify: FastifyInstance) {
   // Create listing
