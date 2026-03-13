@@ -13,6 +13,7 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
   const [copied, setCopied] = useState(false);
   const [showPhonePopover, setShowPhonePopover] = useState(false);
+  const [clickHighlight, setClickHighlight] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -51,6 +52,8 @@ export function Footer() {
   };
 
   const handleCopyPhone = () => {
+    setClickHighlight(true);
+    setTimeout(() => setClickHighlight(false), 250);
     copyToClipboard(UPI_PHONE_NUMBER);
     setCopied(true);
     setShowPhonePopover(true);
@@ -60,7 +63,7 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-border/40 bg-gradient-to-b from-muted/20 to-muted/50">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        {/* One line: brand, tagline, support us, buy me a coffee */}
+        {/* One line: brand, tagline, support us, buy me a tea */}
         <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 text-center sm:gap-x-6">
           <Link
             to="/"
@@ -162,11 +165,14 @@ export function Footer() {
                   type="button"
                   onClick={handleCopyPhone}
                   className="relative inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-800 shadow-sm dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200 dark:hover:bg-amber-900/50"
-                  whileHover={{
-                    scale: 1.06,
-                    boxShadow: "0 4px 20px rgba(217, 119, 6, 0.35)",
-                    transition: { duration: 0.2 },
-                  }}
+                  animate={
+                    clickHighlight
+                      ? {
+                          scale: 1.06,
+                          boxShadow: "0 4px 20px rgba(217, 119, 6, 0.35)",
+                        }
+                      : { scale: 1, boxShadow: "0 0 0 transparent" }
+                  }
                   whileTap={{
                     scale: 0.96,
                     transition: { type: "spring", stiffness: 400, damping: 17 },
