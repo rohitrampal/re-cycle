@@ -2,9 +2,9 @@ import { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } fro
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import sharp from 'sharp';
 import { config } from '../config.js';
-import { AppError, ErrorCode } from '../utils/errors';
+import { AppError, ErrorCode } from '../utils/errors.js';
 import { FILE_UPLOAD } from '../constants/index.js';
-import { validateFile, validateMimeType } from '../utils/file-validator';
+import { validateFile, validateMimeType } from '../utils/file-validator.js';
 
 export interface UploadOptions {
   folder?: string;
