@@ -1,14 +1,15 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { ApiResponse } from '@recycle/shared';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+// Prefer a relative URL so the same build works everywhere (server, reverse proxy, containers).
+// For deployments, set VITE_API_URL to your full API base URL (e.g. https://api.example.com/api).
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '/api').replace(/\/$/, '');
 
 /** Fetch and cache CSRF token for state-changing requests (cross-origin safe). */
 let csrfTokenPromise: Promise<string> | null = null;
 export async function getCsrfToken(): Promise<string> {
   if (csrfTokenPromise) return csrfTokenPromise;
-  const base = API_BASE_URL.replace(/\/$/, '');
-  csrfTokenPromise = fetch(`${base}/csrf-token`, { credentials: 'include' })
+  csrfTokenPromise = fetch(`${API_BASE_URL}/csrf-token`, { credentials: 'include' })
     .then((r) => r.json())
     .then((data: { csrfToken?: string }) => data.csrfToken || '');
   return csrfTokenPromise;
