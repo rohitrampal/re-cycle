@@ -12,7 +12,6 @@ export function Footer() {
   const { t } = useTranslation();
   const currentYear = new Date().getFullYear();
   const [copied, setCopied] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const [showPhonePopover, setShowPhonePopover] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -110,7 +109,7 @@ export function Footer() {
               <span className="text-muted-foreground" aria-hidden>·</span>
               <div className="relative inline-block">
                 <AnimatePresence>
-                  {(isHovered || showPhonePopover) && (
+                  {showPhonePopover && (
                     <motion.div
                       ref={popoverRef}
                       className="absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2"
@@ -162,8 +161,6 @@ export function Footer() {
                   ref={buttonRef}
                   type="button"
                   onClick={handleCopyPhone}
-                  onHoverStart={() => setIsHovered(true)}
-                  onHoverEnd={() => setIsHovered(false)}
                   className="relative inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-800 shadow-sm dark:border-amber-800 dark:bg-amber-950/50 dark:text-amber-200 dark:hover:bg-amber-900/50"
                   whileHover={{
                     scale: 1.06,
@@ -181,9 +178,9 @@ export function Footer() {
                     animate={
                       copied
                         ? { rotate: [0, -10, 10, 0], scale: [1, 1.2, 1] }
-                        : isHovered || showPhonePopover
-                          ? { scale: 1.15 }
-                          : { scale: 1 }
+                        : showPhonePopover
+                            ? { scale: 1.15 }
+                            : { scale: 1 }
                     }
                     transition={{ duration: 0.3 }}
                   >
