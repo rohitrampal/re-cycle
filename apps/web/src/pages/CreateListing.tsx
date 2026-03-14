@@ -40,14 +40,24 @@ export default function CreateListingPage() {
       setLocationError(t("listing.locationUnsupported"));
       return;
     }
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      setLocationError(t("listing.locationErrorSecureContext"));
+      return;
+    }
     setLocationLoading(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setListingLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
         setLocationLoading(false);
       },
-      () => {
-        setLocationError(t("listing.locationError"));
+      (err: GeolocationPositionError) => {
+        const message =
+          err.code === 1
+            ? t("listing.locationErrorDenied")
+            : !window.isSecureContext
+              ? t("listing.locationErrorSecureContext")
+              : t("listing.locationError");
+        setLocationError(message);
         setLocationLoading(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }

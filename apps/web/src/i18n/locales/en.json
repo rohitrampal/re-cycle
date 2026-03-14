@@ -83,6 +83,8 @@
     "locationOptional": "Optional – helps others find your listing when they search by area.",
     "locationConsent": "Optional. We use this to show your listing when others search by area. Approximate area only. You can skip or remove it later.",
     "locationError": "Could not get location",
+    "locationErrorSecureContext": "Location requires a secure connection (HTTPS). Please use the site over HTTPS or enter location manually.",
+    "locationErrorDenied": "Location was denied. Enable location in your browser or enter location manually.",
     "locationUnsupported": "Geolocation is not supported",
     "removeLocation": "Remove location",
     "categories": {

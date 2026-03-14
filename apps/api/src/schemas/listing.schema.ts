@@ -48,12 +48,12 @@ export const createListingSchema = z.object({
       .min(1, 'At least one image is required')
       .max(5, 'Maximum 5 images allowed'),
     latitude: z
-      .number()
+      .coerce.number()
       .min(-90, 'Invalid latitude')
       .max(90, 'Invalid latitude')
       .optional(),
     longitude: z
-      .number()
+      .coerce.number()
       .min(-180, 'Invalid longitude')
       .max(180, 'Invalid longitude')
       .optional(),
@@ -96,12 +96,12 @@ export const updateListingSchema = z.object({
       .max(5, 'Maximum 5 images allowed')
       .optional(),
     latitude: z
-      .number()
+      .coerce.number()
       .min(-90, 'Invalid latitude')
       .max(90, 'Invalid latitude')
       .optional(),
     longitude: z
-      .number()
+      .coerce.number()
       .min(-180, 'Invalid longitude')
       .max(180, 'Invalid longitude')
       .optional(),
