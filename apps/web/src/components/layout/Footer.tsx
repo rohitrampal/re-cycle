@@ -51,13 +51,44 @@ export function Footer() {
     });
   };
 
+  /** Copy text to clipboard; works in production (HTTPS) and fallback for HTTP/mobile. Returns true if copy succeeded. */
+  const copyToClipboardSafe = (text: string): Promise<boolean> => {
+    if (!text) return Promise.resolve(false);
+    // Prefer Clipboard API when available (secure context only)
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      return navigator.clipboard.writeText(text).then(() => true).catch(() => fallbackCopy(text));
+    }
+    return Promise.resolve(fallbackCopy(text));
+  };
+
+  const fallbackCopy = (text: string): boolean => {
+    try {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.top = "-9999px";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      textarea.setSelectionRange(0, text.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
   const handleCopyPhone = () => {
     setClickHighlight(true);
     setTimeout(() => setClickHighlight(false), 250);
-    copyToClipboard(UPI_PHONE_NUMBER);
-    setCopied(true);
+    // Show popover immediately so it works even when clipboard fails (e.g. HTTP, mobile)
     setShowPhonePopover(true);
-    setTimeout(() => setCopied(false), 2000);
+    copyToClipboardSafe(UPI_PHONE_NUMBER).then((success) => {
+      setCopied(success);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
 
   return (
@@ -135,10 +166,14 @@ export function Footer() {
                           </span>
                         </div>
                         <motion.p
-                          className="mt-1.5 font-mono text-lg font-semibold tracking-wide text-amber-900 dark:text-amber-100"
+                          role="button"
+                          tabIndex={0}
+                          className="mt-1.5 cursor-pointer select-all font-mono text-lg font-semibold tracking-wide text-amber-900 dark:text-amber-100 active:opacity-80"
                           initial={{ opacity: 0, x: -4 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: 0.08 }}
+                          onClick={() => copyToClipboardSafe(UPI_PHONE_NUMBER).then((ok) => { if (ok) setCopied(true); setTimeout(() => setCopied(false), 2000); })}
+                          onKeyDown={(e) => e.key === "Enter" && copyToClipboardSafe(UPI_PHONE_NUMBER).then((ok) => { if (ok) setCopied(true); setTimeout(() => setCopied(false), 2000); })}
                         >
                           {UPI_PHONE_NUMBER}
                         </motion.p>
