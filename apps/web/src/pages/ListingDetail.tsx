@@ -23,6 +23,25 @@ export default function ListingDetailPage() {
   const { data: listing, isLoading, isError, error } = useListing(id);
   const updateListing = useUpdateListingMutation();
 
+  const images = listing?.images ?? [];
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [id]);
+
+  useEffect(() => {
+    if (currentImageIndex >= images.length && images.length > 0) {
+      setCurrentImageIndex(images.length - 1);
+    }
+  }, [images.length, currentImageIndex]);
+
+  const hasMultipleImages = images.length > 1;
+  const goPrev = () =>
+    setCurrentImageIndex((i) => (i <= 0 ? images.length - 1 : i - 1));
+  const goNext = () =>
+    setCurrentImageIndex((i) => (i >= images.length - 1 ? 0 : i + 1));
+
   if (isLoading) {
     return (
       <div className="flex min-h-[40vh] items-center justify-center px-4 py-12">
@@ -54,22 +73,6 @@ export default function ListingDetailPage() {
     const found = LISTING_CATEGORIES.find((c) => c.value === code);
     return found ? t(found.labelKey) : code ?? "";
   })();
-
-  const images = listing.images ?? [];
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  useEffect(() => {
-    setCurrentImageIndex(0);
-  }, [id]);
-  useEffect(() => {
-    if (currentImageIndex >= images.length && images.length > 0) {
-      setCurrentImageIndex(images.length - 1);
-    }
-  }, [images.length, currentImageIndex]);
-  const hasMultipleImages = images.length > 1;
-  const goPrev = () =>
-    setCurrentImageIndex((i) => (i <= 0 ? images.length - 1 : i - 1));
-  const goNext = () =>
-    setCurrentImageIndex((i) => (i >= images.length - 1 ? 0 : i + 1));
 
   const price =
     listing.type === "free" || listing.price == null || listing.price === 0

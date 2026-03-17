@@ -405,9 +405,9 @@ export default function CreateListingPage() {
         </Card>
       </motion.div>
       {toast && (
-        <div className="fixed inset-x-4 bottom-4 z-50 flex justify-center sm:inset-x-auto sm:right-4 sm:left-auto">
+        <div className="fixed left-4 top-4 z-50 flex max-w-sm flex-col items-start space-y-2 sm:left-6 sm:top-6">
           <div
-            className={`max-w-sm rounded-md px-4 py-3 shadow-lg border text-sm ${
+            className={`w-full rounded-md px-4 py-3 shadow-lg border text-sm ${
               toast.type === "success"
                 ? "border-emerald-500/60 bg-emerald-50 text-emerald-900"
                 : "border-destructive/60 bg-destructive/10 text-destructive"
