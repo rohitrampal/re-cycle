@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
@@ -39,6 +39,15 @@ export default function BrowsePage() {
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filterSheetSide, setFilterSheetSide] = useState<"right" | "bottom">("right");
+
+  useEffect(() => {
+    const m = window.matchMedia("(min-width: 768px)");
+    const update = () => setFilterSheetSide(m.matches ? "right" : "bottom");
+    update();
+    m.addEventListener("change", update);
+    return () => m.removeEventListener("change", update);
+  }, []);
 
   const requestLocation = useCallback(() => {
     setLocationError(null);
@@ -138,13 +147,17 @@ export default function BrowsePage() {
                   {t("search.filters")}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-sm">
-                <SheetHeader>
+              <SheetContent
+                side={filterSheetSide}
+                className="flex h-full max-h-[85vh] w-full flex-col overflow-hidden p-0 sm:max-w-sm md:max-w-md"
+              >
+                <SheetHeader className="shrink-0 px-4 pt-5 sm:px-6 sm:pt-6">
                   <SheetTitle>{t("search.filters")}</SheetTitle>
                 </SheetHeader>
-                <div className="mt-6 space-y-4">
+                <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-5">
+                  <div className="space-y-5">
                   <div>
-                    <label className="mb-1 block text-sm font-medium">{t("listing.category")}</label>
+                    <label className="mb-2 block text-sm font-medium">{t("listing.category")}</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory((e.target.value || "") as ListingCategory | "")}
@@ -159,7 +172,7 @@ export default function BrowsePage() {
                     </select>
                   </div>
                   <div>
-                    <label className="mb-1 block text-sm font-medium">{t("listing.type")}</label>
+                    <label className="mb-2 block text-sm font-medium">{t("listing.type")}</label>
                     <select
                       value={type}
                       onChange={(e) => setType((e.target.value || "") as ListingType | "")}
@@ -171,9 +184,9 @@ export default function BrowsePage() {
                       <option value="free">{t("listing.free")}</option>
                     </select>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="mb-1 block text-sm font-medium">{t("search.priceRange")} ({t("search.priceMin")})</label>
+                      <label className="mb-2 block text-sm font-medium">{t("search.priceRange")} ({t("search.priceMin")})</label>
                       <Input
                         type="number"
                         min={0}
@@ -184,7 +197,7 @@ export default function BrowsePage() {
                       />
                     </div>
                     <div>
-                      <label className="mb-1 block text-sm font-medium">{t("search.priceRange")} ({t("search.priceMax")})</label>
+                      <label className="mb-2 block text-sm font-medium">{t("search.priceRange")} ({t("search.priceMax")})</label>
                       <Input
                         type="number"
                         min={0}
@@ -195,17 +208,17 @@ export default function BrowsePage() {
                       />
                     </div>
                   </div>
-                  <label className="flex items-center gap-2">
+                  <label className="flex items-center gap-3 py-1">
                     <input
                       type="checkbox"
                       checked={freeOnly}
                       onChange={(e) => setFreeOnly(e.target.checked)}
                       className="h-4 w-4 rounded border-input"
                     />
-                    <span className="text-sm">{t("search.freeOnly")}</span>
+                    <span className="text-sm font-medium">{t("search.freeOnly")}</span>
                   </label>
                   <div>
-                    <label className="mb-1 block text-sm font-medium">{t("search.radius")}</label>
+                    <label className="mb-2 block text-sm font-medium">{t("search.radius")}</label>
                     <p className="mb-2 text-xs text-muted-foreground">{t("search.locationConsentBrowse")}</p>
                     <select
                       value={radiusKm}
@@ -240,8 +253,9 @@ export default function BrowsePage() {
                       </div>
                     )}
                   </div>
+                  </div>
                 </div>
-                <div className="mt-6 flex gap-2">
+                <div className="shrink-0 border-t border-border px-4 py-4 sm:px-6 flex gap-3">
                   <Button
                     type="button"
                     variant="outline"
@@ -261,7 +275,7 @@ export default function BrowsePage() {
                   </Button>
                   <Button
                     type="button"
-                    className="flex-1"
+                    className="flex-1 min-w-0"
                     onClick={() => {
                       setFiltersOpen(false);
                       setAppliedQuery(query.trim());

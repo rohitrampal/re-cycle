@@ -28,6 +28,7 @@
     "login": "लॉगिन",
     "logout": "लॉगआउट",
     "register": "नोंदणी",
+    "signInDescription": "तुमच्या खात्यात साइन इन करा.",
     "email": "ईमेल",
     "password": "पासवर्ड",
     "name": "नाव",
@@ -48,6 +49,8 @@
   "listing": {
     "create": "यादी तयार करा",
     "edit": "यादी संपादित करा",
+    "createDescription": "शेअर करण्यासाठी किंवा विकण्यासाठी नवीन आयटम जोडा.",
+    "editDescription": "तुमची यादी तपशील अपडेट करा. सर्व फील्ड संपादन योग्य आहेत.",
     "title": "शीर्षक",
     "titlePlaceholder": "उदा. इंजिनिअरिंग मॅथ्स पाठ्यपुस्तक",
     "description": "वर्णन",
@@ -87,6 +90,7 @@
     "locationErrorDenied": "स्थान नाकारले. ब्राउझरमध्ये लोकेशन चालू करा किंवा स्थान स्वहस्ते प्रविष्ट करा.",
     "removeLocation": "स्थान काढा",
     "locationUnsupported": "जिओलोकेशन समर्थित नाही",
+    "imageCounter": "{{current}} / {{total}}",
     "categories": {
       "school_1_5": "शाळा 1–5",
       "school_6_8": "शाळा 6–8",
@@ -155,6 +159,8 @@
     "deleteListingConfirm": "ही यादी हटवायची? हे पूर्ववत करता येणार नाही."
   },
   "home": {
+    "academicResourceExchange": "शैक्षणिक संसाधन विनिमय",
+    "heroDescription": "तुमच्या जवळच्या विद्यार्थ्यांकडून पुस्तके, नोट्स आणि अभ्यास सामग्री शोधा.",
     "howItWorks": "हे कसे काम करते",
     "getStarted": "सुरू करा",
     "step1Title": "यादी तयार करा",

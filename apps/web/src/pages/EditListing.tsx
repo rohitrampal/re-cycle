@@ -264,7 +264,7 @@ export default function EditListingPage() {
         <Card className="mt-6 border-2">
           <CardHeader>
             <CardTitle>{t("listing.edit")}</CardTitle>
-            <CardDescription>Update your listing details. All fields are editable.</CardDescription>
+            <CardDescription>{t("listing.editDescription")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">

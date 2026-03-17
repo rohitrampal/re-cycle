@@ -28,6 +28,7 @@
     "login": "લૉગિન",
     "logout": "લૉગઆઉટ",
     "register": "નોંધણી",
+    "signInDescription": "તમારા ખાતામાં સાઇન ઇન કરો.",
     "email": "ઇમેઇલ",
     "password": "પાસવર્ડ",
     "name": "નામ",
@@ -48,6 +49,8 @@
   "listing": {
     "create": "લિસ્ટિંગ બનાવો",
     "edit": "લિસ્ટિંગ સંપાદિત કરો",
+    "createDescription": "શેર કરવા અથવા વેચવા માટે નવી આઇટમ ઉમેરો.",
+    "editDescription": "તમારી લિસ્ટિંગ વિગતો અપડેટ કરો. બધા ફીલ્ડ સંપાદન યોગ્ય છે.",
     "title": "શીર્ષક",
     "titlePlaceholder": "જેમ કે ઇજનેરી મેથ્સ પાઠ્યપુસ્તક",
     "description": "વર્ણન",
@@ -87,6 +90,7 @@
     "locationErrorDenied": "સ્થાન નકારાઈ ગયું. બ્રાઉઝરમાં લોકેશન ચાલુ કરો અથવા સ્થાન મેન્યુઅલી દાખલ કરો.",
     "removeLocation": "સ્થાન દૂર કરો",
     "locationUnsupported": "જીઓલોકેશન સપોર્ટેડ નથી",
+    "imageCounter": "{{current}} / {{total}}",
     "categories": {
       "school_1_5": "શાળા 1–5",
       "school_6_8": "શાળા 6–8",
@@ -155,6 +159,8 @@
     "deleteListingConfirm": "આ યાદી કાઢી નાખો? આ પૂર્વવત કરી શકાશે નહીં."
   },
   "home": {
+    "academicResourceExchange": "શૈક્ષણિક સંસાધન વિનિમય",
+    "heroDescription": "તમારી નજીકના વિદ્યાર્થીઓ પાસેથી પુસ્તકો, નોંધો અને અભ્યાસ સામગ્રી શોધો.",
     "howItWorks": "આ કેવી રીતે કામ કરે છે",
     "getStarted": "શરૂ કરો",
     "step1Title": "લિસ્ટિંગ બનાવો",

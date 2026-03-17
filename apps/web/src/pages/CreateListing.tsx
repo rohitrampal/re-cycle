@@ -218,7 +218,7 @@ export default function CreateListingPage() {
         <Card className="mt-6 border-2">
           <CardHeader>
             <CardTitle>{t("listing.title")}</CardTitle>
-            <CardDescription>Add a new item to share or sell.</CardDescription>
+            <CardDescription>{t("listing.createDescription")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">

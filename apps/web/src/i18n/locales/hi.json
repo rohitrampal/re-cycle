@@ -28,6 +28,7 @@
     "login": "लॉगिन",
     "logout": "लॉगआउट",
     "register": "पंजीकरण",
+    "signInDescription": "अपने खाते में साइन इन करें।",
     "email": "ईमेल",
     "password": "पासवर्ड",
     "name": "नाम",
@@ -48,6 +49,8 @@
   "listing": {
     "create": "सूची बनाएं",
     "edit": "सूची संपादित करें",
+    "createDescription": "साझा करने या बेचने के लिए एक नया आइटम जोड़ें।",
+    "editDescription": "अपनी लिस्टिंग विवरण अपडेट करें। सभी फ़ील्ड संपादन योग्य हैं।",
     "title": "शीर्षक",
     "titlePlaceholder": "जैसे इंजीनियरिंग मैथ्स की किताब",
     "description": "विवरण",
@@ -87,6 +90,7 @@
     "locationErrorDenied": "स्थान अस्वीकृत। ब्राउज़र में लोकेशन चालू करें या स्थान हाथ से दर्ज करें।",
     "removeLocation": "स्थान हटाएं",
     "locationUnsupported": "जियोलोकेशन समर्थित नहीं है",
+    "imageCounter": "{{current}} / {{total}}",
     "categories": {
       "school_1_5": "स्कूल 1–5",
       "school_6_8": "स्कूल 6–8",
@@ -155,6 +159,8 @@
     "deleteListingConfirm": "इस लिस्टिंग को हटाएं? इसे पूर्ववत नहीं किया जा सकता।"
   },
   "home": {
+    "academicResourceExchange": "अकादमिक संसाधन विनिमय",
+    "heroDescription": "अपने पास के छात्रों से किताबें, नोट्स और अध्ययन सामग्री खोजें।",
     "howItWorks": "यह कैसे काम करता है",
     "getStarted": "शुरू करें",
     "step1Title": "लिस्टिंग बनाएं",

@@ -128,7 +128,7 @@ export default function ListingDetailPage() {
                       <ChevronRight className="h-5 w-5" />
                     </Button>
                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs text-white">
-                      {currentImageIndex + 1} / {images.length}
+                      {t("listing.imageCounter", { current: currentImageIndex + 1, total: images.length })}
                     </div>
                   </>
                 )}

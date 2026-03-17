@@ -28,6 +28,7 @@
     "login": "Login",
     "logout": "Logout",
     "register": "Register",
+    "signInDescription": "Sign in to your account.",
     "email": "Email",
     "password": "Password",
     "name": "Name",
@@ -48,6 +49,8 @@
   "listing": {
     "create": "Create Listing",
     "edit": "Edit Listing",
+    "createDescription": "Add a new item to share or sell.",
+    "editDescription": "Update your listing details. All fields are editable.",
     "title": "Title",
     "titlePlaceholder": "e.g. Engineering Maths textbook",
     "description": "Description",
@@ -87,6 +90,7 @@
     "locationErrorDenied": "Location was denied. Enable location in your browser or enter location manually.",
     "locationUnsupported": "Geolocation is not supported",
     "removeLocation": "Remove location",
+    "imageCounter": "{{current}} / {{total}}",
     "categories": {
       "school_1_5": "School 1–5",
       "school_6_8": "School 6–8",
@@ -155,6 +159,8 @@
     "deleteListingConfirm": "Delete this listing? This cannot be undone."
   },
   "home": {
+    "academicResourceExchange": "Academic resource exchange",
+    "heroDescription": "Find books, notes, and study material from students near you.",
     "howItWorks": "How it works",
     "getStarted": "Get started",
     "step1Title": "Create a listing",
@@ -193,9 +199,8 @@
     "priceMin": "Price cannot be less than 0.",
     "priceRequiredSellRent": "Price is required and must be greater than 0 for sell or rent.",
     "uploadInvalidFileType": "Please use only JPEG, PNG, or WebP images.",
-    "uploadFileEmpty": "File is empty or invalid. Please choose a valid image file.",
-    "uploadFileTooLarge": "File is too large. Maximum size is 10 MB.",
     "uploadFileEmpty": "One or more files are empty or invalid. Please select valid image files (JPEG, PNG, or WebP).",
+    "uploadFileTooLarge": "File is too large. Maximum size is 10 MB.",
     "uploadMaxFiles": "Maximum 5 images allowed.",
     "uploadNoFile": "No image selected. Please add at least one image."
   }

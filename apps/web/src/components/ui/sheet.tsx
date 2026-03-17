@@ -27,7 +27,7 @@ SheetOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
-  side?: "left" | "right";
+  side?: "left" | "right" | "bottom";
   className?: string;
 }
 
@@ -40,11 +40,20 @@ const SheetContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-y-0 z-50 flex w-full max-w-[min(320px,85vw)] flex-col gap-4 border-r border-border bg-background shadow-2xl focus:outline-none",
-        side === "left" ? "left-0" : "right-0",
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
-        side === "right" &&
+        "fixed z-50 flex flex-col gap-4 border-border bg-background shadow-2xl focus:outline-none",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out",
+        side === "bottom" && [
+          "inset-x-0 bottom-0 top-auto w-full max-h-[85vh] rounded-t-2xl border-t overflow-y-auto",
+          "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+        ],
+        side === "left" && [
+          "inset-y-0 left-0 w-full max-w-[min(320px,85vw)] border-r",
+          "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left",
+        ],
+        side === "right" && [
+          "inset-y-0 right-0 w-full max-w-[min(320px,85vw)] border-r",
           "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
+        ],
         className
       )}
       {...props}

@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Home, LayoutGrid, PlusCircle, User, Sun, Moon, Monitor, X } from "lucide-react";
 import { useUIStore } from "@/store/ui-store";
 import { useAuthStore } from "@/store/auth-store";
+import { SUPPORTED_LANG_CODES, LANGUAGE_NAMES } from "@/i18n/config";
+import type { SupportedLanguage } from "@/store/ui-store";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -16,12 +18,13 @@ const navLinks = [
 ] as const;
 
 export function Sidebar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const sidebarOpen = useUIStore((s) => s.sidebarOpen);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
   const theme = useUIStore((s) => s.theme);
   const setTheme = useUIStore((s) => s.setTheme);
+  const language = useUIStore((s) => s.language);
   const setLanguage = useUIStore((s) => s.setLanguage);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
 
@@ -87,13 +90,22 @@ export function Sidebar() {
             ))}
           </div>
           <p className="mt-3 px-2 text-xs font-medium text-muted-foreground">{t("common.language")}</p>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setLanguage("en")} className="flex-1">
-              EN
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setLanguage("hi")} className="flex-1">
-              हि
-            </Button>
+          <div className="flex flex-wrap gap-2">
+            {SUPPORTED_LANG_CODES.map((code) => (
+              <Button
+                key={code}
+                variant={language === code ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  const lang = code as SupportedLanguage;
+                  setLanguage(lang);
+                  i18n.changeLanguage(lang);
+                }}
+                className="min-w-0 flex-1 basis-0"
+              >
+                {LANGUAGE_NAMES[code]}
+              </Button>
+            ))}
           </div>
         </div>
       </SheetContent>

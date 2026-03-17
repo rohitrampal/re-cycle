@@ -206,7 +206,7 @@ export default function ProfilePage() {
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-muted-foreground text-xs">
-                              —
+                              {t("search.noValue")}
                             </div>
                           )}
                         </div>

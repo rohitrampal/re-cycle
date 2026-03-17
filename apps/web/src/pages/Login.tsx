@@ -41,7 +41,7 @@ export default function LoginPage() {
         <Card className="border-2 shadow-xl">
           <CardHeader className="space-y-1 text-center">
             <CardTitle className="text-2xl">{t("auth.login")}</CardTitle>
-            <CardDescription>Sign in to your account.</CardDescription>
+            <CardDescription>{t("auth.signInDescription")}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">

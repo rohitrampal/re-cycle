@@ -25,7 +25,7 @@ export default function HomePage() {
             transition={{ delay: 0.2 }}
           >
             <Sparkles className="h-4 w-4" />
-            Academic resource exchange
+            {t("home.academicResourceExchange")}
           </motion.span>
           <motion.h1
             className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-foreground"
@@ -41,7 +41,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            Find books, notes, and study material from students near you.
+            {t("home.heroDescription")}
           </motion.p>
           <motion.div
             className="mt-10 flex flex-wrap items-center justify-center gap-4"
