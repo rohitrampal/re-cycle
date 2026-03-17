@@ -111,12 +111,45 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Triggers to auto-update updated_at
-CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Triggers to auto-update updated_at (idempotent creation)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_trigger
+    WHERE tgname = 'update_users_updated_at'
+  ) THEN
+    CREATE TRIGGER update_users_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END;
+$$;
 
-CREATE TRIGGER update_listings_updated_at BEFORE UPDATE ON listings
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_trigger
+    WHERE tgname = 'update_listings_updated_at'
+  ) THEN
+    CREATE TRIGGER update_listings_updated_at
+    BEFORE UPDATE ON listings
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END;
+$$;
 
-CREATE TRIGGER update_institutions_updated_at BEFORE UPDATE ON institutions
-  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_trigger
+    WHERE tgname = 'update_institutions_updated_at'
+  ) THEN
+    CREATE TRIGGER update_institutions_updated_at
+    BEFORE UPDATE ON institutions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+  END IF;
+END;
+$$;
