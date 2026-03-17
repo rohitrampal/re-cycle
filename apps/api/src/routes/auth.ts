@@ -175,10 +175,45 @@ export default async function authRoutes(fastify: FastifyInstance) {
     };
   });
 
-  // Get current user
+  // Get current user (profile for /auth/me)
   fastify.get('/me', { preHandler: [authenticate] }, async (request: FastifyRequest) => {
     const userId = (request.user as { id: string }).id;
-    const result = await db.query('SELECT id, email, name, phone FROM users WHERE id = $1', [userId]);
+
+    const result = await db.query(
+      `
+      SELECT
+        u.id,
+        u.email,
+        u.name,
+        u.phone,
+        u.verified,
+        u.avatar_url AS "avatar",
+        u.institution_id AS "institutionId",
+        i.name AS "institutionName",
+        u.created_at AS "createdAt",
+        u.updated_at AS "updatedAt",
+        CASE
+          WHEN u.location IS NULL THEN NULL
+          ELSE json_build_object(
+            'latitude', ST_Y(u.location::geometry),
+            'longitude', ST_X(u.location::geometry)
+          )
+        END AS "location",
+        COALESCE(l_stats.total_listings, 0) AS "totalListings",
+        NULL::numeric AS "rating",
+        NULL::text AS "bio"
+      FROM users u
+      LEFT JOIN institutions i ON i.id = u.institution_id
+      LEFT JOIN (
+        SELECT user_id, COUNT(*) AS total_listings
+        FROM listings
+        GROUP BY user_id
+      ) l_stats ON l_stats.user_id = u.id
+      WHERE u.id = $1
+      `,
+      [userId]
+    );
+
     return {
       success: true,
       data: result.rows[0],
