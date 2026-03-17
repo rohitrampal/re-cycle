@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useLoginMutation } from "@/hooks/use-auth";
+import { validateEmail } from "@/lib/validation";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -22,6 +23,13 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      setError(t(emailValidation.message ?? "errors.invalidEmail"));
+      return;
+    }
+
     try {
       await login.mutateAsync({ email: email.trim(), password });
       navigate("/", { replace: true });
@@ -60,6 +68,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  aria-invalid={!validateEmail(email).valid}
                 />
               </div>
               <div className="space-y-2">

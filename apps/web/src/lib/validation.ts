@@ -1,34 +1,47 @@
 /**
  * Validation helpers for the ReCycle frontend.
- * Use for form validation so numeric fields never go below zero and phone is digits-only.
+ * Central place for numeric, phone, and email validation.
  */
 
-/** Allow optional leading + then only digits; empty string is valid (optional field). */
-const PHONE_NUMBERS_ONLY_REGEX = /^\+?[0-9]*$/;
+/** Indian mobile number: +91XXXXXXXXXX or 10-digit starting 6–9. */
+const INDIAN_MOBILE_REGEX = /^(?:\+91[6-9]\d{9}|[6-9]\d{9})$/;
 
-/** After stripping + and spaces, phone must be only digits. */
-export function isPhoneNumbersOnly(value: string): boolean {
-  if (value.trim() === "") return true;
-  const digitsOnly = value.replace(/^\+/, "").replace(/\s/g, "");
-  return /^[0-9]+$/.test(digitsOnly);
-}
-
-/** Validate phone for registration: if provided, must contain only numbers (optional leading +). */
+/** Validate Indian phone number. Empty string is treated as valid for optional fields. */
 export function validatePhone(value: string): { valid: boolean; message?: string } {
-  if (value.trim() === "") return { valid: true };
-  if (!PHONE_NUMBERS_ONLY_REGEX.test(value)) {
+  const raw = value.trim();
+  if (raw === "") return { valid: true };
+
+  // Only allow + and digits in the input
+  if (!/^[+\d]+$/.test(raw)) {
     return { valid: false, message: "errors.invalidPhone" };
   }
-  const digitsOnly = value.replace(/\D/g, "");
-  if (digitsOnly.length === 0) {
-    return { valid: false, message: "errors.invalidPhone" };
+
+  const normalized = raw.replace(/\s|-/g, "");
+
+  if (INDIAN_MOBILE_REGEX.test(normalized)) {
+    return { valid: true };
   }
-  return { valid: true };
+
+  return { valid: false, message: "errors.invalidPhone" };
 }
 
 /** Normalize phone to digits-only (strip + and spaces) for API. */
 export function normalizePhone(value: string): string {
   return value.replace(/\D/g, "");
+}
+
+/** Basic email format validation for frontend forms. */
+export function validateEmail(value: string): { valid: boolean; message?: string } {
+  const raw = value.trim();
+  if (raw === "") {
+    return { valid: true };
+  }
+  // Simple but robust RFC5322-inspired pattern; backend does stricter validation.
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!EMAIL_REGEX.test(raw)) {
+    return { valid: false, message: "errors.invalidEmail" };
+  }
+  return { valid: true };
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { ImagePlus, X, MapPin } from "lucide-react";
@@ -33,6 +33,13 @@ export default function CreateListingPage() {
   const [locationLoading, setLocationLoading] = useState(false);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(id);
+  }, [toast]);
 
   const requestLocation = useCallback(() => {
     setLocationError(null);
@@ -202,8 +209,10 @@ export default function CreateListingPage() {
       setLocationError(null);
       filePreviews.forEach((url) => URL.revokeObjectURL(url));
       setFilePreviews([]);
+      setToast({ type: "success", message: t("common.success") });
     } catch (err) {
       setError(getApiErrorDisplayMessage(err, t));
+      setToast({ type: "error", message: getApiErrorDisplayMessage(err, t) });
     }
   };
 
@@ -395,6 +404,20 @@ export default function CreateListingPage() {
           </form>
         </Card>
       </motion.div>
+      {toast && (
+        <div className="fixed inset-x-4 bottom-4 z-50 flex justify-center sm:inset-x-auto sm:right-4 sm:left-auto">
+          <div
+            className={`max-w-sm rounded-md px-4 py-3 shadow-lg border text-sm ${
+              toast.type === "success"
+                ? "border-emerald-500/60 bg-emerald-50 text-emerald-900"
+                : "border-destructive/60 bg-destructive/10 text-destructive"
+            }`}
+            role="status"
+          >
+            {toast.message}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

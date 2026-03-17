@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegisterMutation } from "@/hooks/use-auth";
-import { validatePhone, normalizePhone } from "@/lib/validation";
+import { validatePhone, normalizePhone, validateEmail } from "@/lib/validation";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
@@ -24,6 +24,12 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+      setError(t(emailValidation.message ?? "errors.invalidEmail"));
+      return;
+    }
 
     if (phone.trim()) {
       const phoneValidation = validatePhone(phone);
@@ -88,6 +94,7 @@ export default function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   autoComplete="email"
+                  aria-invalid={!validateEmail(email).valid}
                 />
               </div>
               <div className="space-y-2">

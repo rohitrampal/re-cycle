@@ -68,6 +68,7 @@ export default function HomePage() {
       <section className="border-t border-border bg-muted/30 px-4 py-16 sm:px-6">
         <div className="mx-auto max-w-5xl">
           <motion.h2
+            id="how-it-works"
             className="text-2xl font-bold sm:text-3xl"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -88,15 +89,20 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <Card className="h-full border-2 transition-shadow hover:shadow-lg">
-                  <CardHeader>
-                    <span className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <Icon className="h-6 w-6" />
-                    </span>
-                    <CardTitle>{t(titleKey)}</CardTitle>
-                    <CardDescription>{t(descKey)}</CardDescription>
-                  </CardHeader>
-                </Card>
+                <Link
+                  to="/browse"
+                  className="block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl"
+                >
+                  <Card className="h-full border-2 transition-shadow hover:shadow-lg cursor-pointer">
+                    <CardHeader>
+                      <span className="mb-2 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <Icon className="h-6 w-6" />
+                      </span>
+                      <CardTitle>{t(titleKey)}</CardTitle>
+                      <CardDescription>{t(descKey)}</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
               </motion.div>
             ))}
           </div>

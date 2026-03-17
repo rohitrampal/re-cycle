@@ -31,6 +31,7 @@ import { useAuthStore } from "@/store/auth-store";
 import { useUIStore } from "@/store/ui-store";
 import { SUPPORTED_LANG_CODES, LANGUAGE_NAMES } from "@/i18n/config";
 import { LISTING_CATEGORIES } from "@/lib/listing-categories";
+import { validatePhone } from "@/lib/validation";
 import type { SupportedLanguage } from "@/store/ui-store";
 import type { UserProfile } from "@recycle/shared";
 
@@ -50,6 +51,7 @@ export default function ProfilePage() {
   const [editName, setEditName] = useState("");
   const [editPhone, setEditPhone] = useState("");
   const [editBio, setEditBio] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
 
   const updateProfile = useUpdateProfileMutation();
   const logoutMutation = useLogoutMutation();
@@ -66,11 +68,22 @@ export default function ProfilePage() {
       setEditName(profile.name ?? "");
       setEditPhone(profile.phone ?? "");
       setEditBio((profile as { bio?: string }).bio ?? "");
+      setEditError(null);
     }
   }, [profile, editOpen]);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
+    setEditError(null);
+
+    if (editPhone.trim()) {
+      const phoneValidation = validatePhone(editPhone);
+      if (!phoneValidation.valid) {
+        setEditError(phoneValidation.message ?? "errors.invalidPhone");
+        return;
+      }
+    }
+
     try {
       await updateProfile.mutateAsync({
         name: editName.trim() || undefined,
@@ -268,11 +281,17 @@ export default function ProfilePage() {
 
       {/* Edit Profile Sheet */}
       <Sheet open={editOpen} onOpenChange={setEditOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-md">
-          <SheetHeader>
+        <SheetContent
+          side="right"
+          className="flex h-full max-h-[85vh] w-full flex-col overflow-hidden p-0 sm:max-w-md"
+        >
+          <SheetHeader className="shrink-0 px-4 pt-5 sm:px-6 sm:pt-6">
             <SheetTitle>{t("profile.editProfile")}</SheetTitle>
           </SheetHeader>
-          <form onSubmit={handleSaveProfile} className="mt-6 space-y-4">
+          <form
+            onSubmit={handleSaveProfile}
+            className="flex flex-1 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-4"
+          >
             <div>
               <Label htmlFor="edit-name">{t("auth.name")}</Label>
               <Input
@@ -288,11 +307,21 @@ export default function ProfilePage() {
               <Input
                 id="edit-phone"
                 type="tel"
+                inputMode="numeric"
                 value={editPhone}
-                onChange={(e) => setEditPhone(e.target.value)}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (/^[+\d]*$/.test(v)) setEditPhone(v);
+                }}
                 placeholder={t("auth.phonePlaceholderShort")}
                 className="mt-1"
+                aria-invalid={!!(editPhone.trim() && !validatePhone(editPhone).valid)}
               />
+              {editPhone.trim() && !validatePhone(editPhone).valid && (
+                <p className="mt-1 text-sm text-destructive" role="alert">
+                  {t("errors.invalidPhone")}
+                </p>
+              )}
             </div>
             <div>
               <Label htmlFor="edit-bio">{t("profile.bio")}</Label>
@@ -305,9 +334,11 @@ export default function ProfilePage() {
                 className="mt-1 flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
-            {updateProfile.isError && (
+            {(editError || updateProfile.isError) && (
               <p className="text-sm text-destructive" role="alert">
-                {updateProfile.error instanceof Error
+                {editError
+                  ? t(editError)
+                  : updateProfile.error instanceof Error
                   ? updateProfile.error.message
                   : t("errors.somethingWentWrong")}
               </p>
@@ -335,11 +366,14 @@ export default function ProfilePage() {
 
       {/* Settings Sheet */}
       <Sheet open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <SheetContent side="right" className="w-full sm:max-w-sm">
-          <SheetHeader>
+        <SheetContent
+          side="right"
+          className="flex h-full max-h-[85vh] w-full flex-col overflow-hidden p-0 sm:max-w-sm"
+        >
+          <SheetHeader className="shrink-0 px-4 pt-5 sm:px-6 sm:pt-6">
             <SheetTitle>{t("profile.settings")}</SheetTitle>
           </SheetHeader>
-          <div className="mt-6 space-y-4">
+          <div className="flex flex-1 flex-col overflow-y-auto px-4 py-4 sm:px-6 sm:py-5 space-y-4">
             <div>
               <Label className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
