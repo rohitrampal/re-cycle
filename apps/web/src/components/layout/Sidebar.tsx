@@ -90,23 +90,22 @@ export function Sidebar() {
             ))}
           </div>
           <p className="mt-3 px-2 text-xs font-medium text-muted-foreground">{t("common.language")}</p>
-          <div className="flex flex-wrap gap-2">
+          <select
+            value={language}
+            onChange={(e) => {
+              const lang = e.target.value as SupportedLanguage;
+              setLanguage(lang);
+              i18n.changeLanguage(lang);
+            }}
+            aria-label={t("common.language")}
+            className="mt-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
             {SUPPORTED_LANG_CODES.map((code) => (
-              <Button
-                key={code}
-                variant={language === code ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  const lang = code as SupportedLanguage;
-                  setLanguage(lang);
-                  i18n.changeLanguage(lang);
-                }}
-                className="min-w-0 flex-1 basis-0"
-              >
+              <option key={code} value={code}>
                 {LANGUAGE_NAMES[code]}
-              </Button>
+              </option>
             ))}
-          </div>
+          </select>
         </div>
       </SheetContent>
     </Sheet>
